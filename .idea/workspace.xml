@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f22db324-7f2e-4b40-8f6e-ea1750873729" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dictionaries/dantes_dictionary.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/preprocessing.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/text/Inferno.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/roman_to_int.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/preprocessing.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,7 +40,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.preprocessing">
+  <component name="RunManager" selected="Python.prove">
     <configuration name="asperti" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Project" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -129,8 +127,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.preprocessing" />
         <item itemvalue="Python.prove" />
+        <item itemvalue="Python.preprocessing" />
         <item itemvalue="Python.dante" />
         <item itemvalue="Python.asperti" />
       </list>
