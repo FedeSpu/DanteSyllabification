@@ -1,5 +1,6 @@
 from src.utils.roman_to_int import *
 # Pre-processing text for better handling
+punctuation = '•:?!<>.;,-—«»“”()'
 text_raw = open('../text/inferno.txt', 'rb').readlines()
 verses = []
 
@@ -7,7 +8,7 @@ for line in text_raw:
     line_dec = line.decode(encoding='utf-8').lstrip()
 
     if not line_dec:
-        # Append "end of terzine", useful for special rhetorical forms. Only one, even if more new lines
+        # Append "end of triplet", useful for special rhetorical forms. Only one, even if more new lines
         if verses and (verses[-1] != "<EOT>"):
             verses.append("<EOT>")
         continue
@@ -22,6 +23,10 @@ for line in text_raw:
             verses.append("<EOC>")
         verses.append(book + " Canto " + str(canticle))
         continue
+
+    for p in punctuation:
+        if p in line_dec:
+            line_dec = line_dec.replace(p, '')
 
     verses.append(line_dec.rstrip())
 
