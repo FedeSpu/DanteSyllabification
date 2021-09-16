@@ -31,7 +31,7 @@ val_batches = make_batches(val_examples)
 '''
 
 
-def make_dataset(*sequences, batch_size=32):
+def make_dataset(*sequences, batch_size=64):
     buffer_size = len(sequences[0])
 
     dataset = tf.data.Dataset.from_tensor_slices(tuple(sequences)).shuffle(buffer_size)

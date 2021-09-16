@@ -45,5 +45,7 @@ transformer_config = {'num_layers': 4,
 
 vocab_size = len(tokenizer.word_index) + 1
 model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
+X_train = tf.dtypes.cast(X_train, dtype=tf.int64)
+y_train = tf.dtypes.cast(y_train, dtype=tf.int64)
 dataset = make_dataset(X_train, y_train)
-model.train(dataset, 10)
+model.train(dataset, 40)

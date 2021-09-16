@@ -77,7 +77,6 @@ class ModelTransformer(object):
 
             # inp -> portuguese, tar -> english
             for (batch, (inp, tar)) in enumerate(batches):
-                print(type(inp))
                 self.train_step(inp=inp, tar=tar)
 
                 if batch % 50 == 0:
@@ -86,7 +85,7 @@ class ModelTransformer(object):
                         f'Accuracy {self.train_accuracy.result():.4f}')
 
             if (epoch + 1) % 5 == 0:
-                ckpt_save_path = self.ckpt_manager.save()
+                ckpt_save_path = self.cpkt_manager.save()
                 print(f'Saving checkpoint for epoch {epoch + 1} at {ckpt_save_path}')
 
             print(f'Epoch {epoch + 1} Loss {self.train_loss.result():.4f} Accuracy {self.train_accuracy.result():.4f}')
