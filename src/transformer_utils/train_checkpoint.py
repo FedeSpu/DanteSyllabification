@@ -21,13 +21,15 @@ def create_checkpoint(transformer, optimizer):
     return ckpt_manager
 
 
-def train_transformer(transformer, optimizer):
+def train_transformer(transformer, optimizer, train_loss, train_accuracy):
     # TODO: Is it the best call?
     ckpt_manager = create_checkpoint(transformer, optimizer)
 
     # TODO: Is it the best place to initialize?
+    '''
     train_loss = tf.keras.metrics.Mean(name='train_loss')
     train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
+    '''
 
     # The @tf.function trace-compiles train_step into a TF graph for faster
     # execution. The function specializes to the precise shape of the argument

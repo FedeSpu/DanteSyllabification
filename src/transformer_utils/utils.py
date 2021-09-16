@@ -26,7 +26,8 @@ def get_angles(pos, i, d_model):
     return pos * angle_rates
 
 
-# TODO: NAME
+# POINT WISE FEED FORWARD NETWORK
+# Two fully-connected layers with a ReLU activation in between
 def point_wise_feed_forward_network(d_model, dff):
     return tf.keras.Sequential([
         tf.keras.layers.Dense(dff, activation='relu'),  # (batch_size, seq_len, dff)

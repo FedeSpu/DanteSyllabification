@@ -34,7 +34,9 @@ verses_raw_pad = tf.keras.preprocessing.sequence.pad_sequences(verses_raw_enc, p
 X_train, X_test, y_train, y_test = train_test_split(verses_raw_pad, verses_syll_pad,
                                                     random_state=random_state, train_size=0.66)
 
+# 2.1) Set hyperparameters
 transformer_config = {'num_layers': 2,
                       'd_model': 512,
                       'num_heads': 8,
-                      'dff': 2048}
+                      'dff': 2048,
+                      'dropout_rate': 0.1}
