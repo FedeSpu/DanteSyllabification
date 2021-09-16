@@ -1,5 +1,7 @@
 from src.preprocessing import *
 from sklearn.model_selection import train_test_split
+from src.model import *
+from src.utils.utils import *
 import tensorflow as tf
 
 file_name_raw = 'inferno'
@@ -35,8 +37,13 @@ X_train, X_test, y_train, y_test = train_test_split(verses_raw_pad, verses_syll_
                                                     random_state=random_state, train_size=0.66)
 
 # 2.1) Set hyperparameters
-transformer_config = {'num_layers': 2,
-                      'd_model': 512,
-                      'num_heads': 8,
-                      'dff': 2048,
+transformer_config = {'num_layers': 4,
+                      'd_model': 256,
+                      'num_heads': 4,
+                      'dff': 1024,
                       'dropout_rate': 0.1}
+
+vocab_size = len(tokenizer.word_index) + 1
+model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
+dataset = make_dataset(X_train, y_train)
+model.train(dataset, 10)

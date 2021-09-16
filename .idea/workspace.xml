@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f22db324-7f2e-4b40-8f6e-ea1750873729" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/syllabification.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/syllabification.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/transformer_utils/custom_schedule.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transformer_utils/custom_schedule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/transformer_utils/train_checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transformer_utils/train_checkpoint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/transformer_utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transformer_utils/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tranformer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/tranformer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/transformer_utils/train_checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transformer_utils/checkpoint.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/utils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -44,7 +44,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.encoder">
+  <component name="RunManager" selected="Python.syllabification">
     <configuration name="dante" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Project" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -152,8 +152,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.encoder" />
         <item itemvalue="Python.syllabification" />
+        <item itemvalue="Python.encoder" />
         <item itemvalue="Python.preprocessing" />
         <item itemvalue="Python.prove" />
         <item itemvalue="Python.dante" />
@@ -185,5 +185,26 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/syllabification.py</url>
+          <line>48</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/model.py</url>
+          <line>56</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/model.py</url>
+          <line>80</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
