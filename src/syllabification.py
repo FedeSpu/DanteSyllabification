@@ -49,7 +49,7 @@ model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
 X_train = tf.dtypes.cast(X_train, dtype=tf.int64)
 y_train = tf.dtypes.cast(y_train, dtype=tf.int64)
 dataset = make_dataset(X_train, y_train)
-model.train(dataset, 40)
+model.train(dataset, 1)
 
 
 def choose_greedy(logits):
@@ -59,19 +59,21 @@ def choose_greedy(logits):
 
 
 start_symbol = tokenizer.word_index['<go>']
-stop_symbol = tokenizer.word_index['<eof>']
+stop_symbol = tokenizer.word_index['<eov>']
 encoder_input = tf.convert_to_tensor(X_test)
 decoder_input = tf.repeat([[start_symbol]], repeats=encoder_input.shape[0], axis=0)
 # decoder_input = tf.convert_to_tensor([start_symbol])
 # decoder_input = tf.expand_dims(decoder_input, 0)
 
+# for _ in tf.range(10):
 output = decoder_input
 enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
-enc_output = model.get_transformer().encoder(encoder_input, False, enc_padding_mask)
-print(encoder_input)
+# enc_output = model.get_transformer().encoder(encoder_input, False, enc_padding_mask)
+enc_output = model.get_transformer().call([encoder_input, output], False)
+# print(encoder_input)
 # p, aw = model.get_transformer().call((encoder_input, output), False)
 
-for _ in range(100):
+for _ in range(10):
     enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
     dec_outuput, _ = model.get_transformer().decoder(output, enc_output, False, combined_mask, dec_padding_mask)
     predictions = model.get_transformer().final_layer(dec_outuput)

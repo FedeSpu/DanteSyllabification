@@ -1,5 +1,6 @@
 src/prove.py
 venv
 src/old_checkpoints
+src/old2_checkpoints
 old_venv
 src/checkpoints
