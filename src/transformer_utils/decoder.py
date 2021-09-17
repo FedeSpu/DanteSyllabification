@@ -18,7 +18,7 @@ class Decoder(tf.keras.layers.Layer):
                            for _ in range(num_layers)]
         self.dropout = tf.keras.layers.Dropout(rate)
 
-    def __call__(self, x, enc_output, training, look_ahead_mask, padding_mask):
+    def call(self, x, enc_output, training, look_ahead_mask, padding_mask):
         seq_len = tf.shape(x)[1]
         attention_weights = {}
 

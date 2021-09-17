@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f22db324-7f2e-4b40-8f6e-ea1750873729" name="Default Changelist" comment="" />
+    <list default="true" id="f22db324-7f2e-4b40-8f6e-ea1750873729" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/syllabification.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/syllabification.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/transformer_utils/decoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transformer_utils/decoder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/transformer_utils/decoder_layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transformer_utils/decoder_layer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/transformer_utils/encoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transformer_utils/encoder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/transformer_utils/multi_head_attention.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transformer_utils/multi_head_attention.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -189,8 +196,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/syllabification.py</url>
-          <line>71</line>
-          <option name="timeStamp" value="10" />
+          <line>69</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/syllabification.py</url>
+          <line>51</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
