@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f22db324-7f2e-4b40-8f6e-ea1750873729" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/tokenizer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/preprocessing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/inferno_syll_verses.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/inferno_verses.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/syllabification.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/syllabification.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tmp_translator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/tmp_translator.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -189,8 +190,28 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/syllabification.py</url>
-          <line>75</line>
-          <option name="timeStamp" value="15" />
+          <line>96</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/syllabification.py</url>
+          <line>89</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/syllabification.py</url>
+          <line>80</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/syllabification.py</url>
+          <line>70</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/syllabification.py</url>
+          <line>69</line>
+          <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
