@@ -14,10 +14,10 @@ punctuation = r'[?!;:.,«»“‟”()-\[\]]'
 
 def generate_data():
     data = read_data()
-    data, trainingData = generate_training_data(data)
+    data, training_data = generate_training_data(data)
     result = generate_result(data)
     with open('../outputs/' + fileTraining + '.txt', 'w+', encoding='utf-8') as file:
-        file.writelines(trainingData)
+        file.writelines(training_data)
     with open('../outputs/' + fileResult + '.txt', 'w+', encoding='utf-8') as file:
         file.writelines(result)
     # nel codice di pietro viene applicato questo ma i risultati sono prettamente simili, la computazione un po' più veloce ma non so il motivo per cui lo usino
@@ -31,7 +31,7 @@ def generate_data():
     text_no_tag = re.sub(r'^ ', '', text_no_tag)
     text_no_tag = re.sub(r'\n ', '\n', text_no_tag)
     '''
-    generate_vocabulary(trainingData)
+    generate_vocabulary(training_data)
 
 
 def generate_training_data(data):
@@ -51,23 +51,23 @@ def generate_training_data(data):
 
 def generate_result(data):
     # add tag sep to indicate separator
-    resultText = re.sub(r' +', ' <SEP> ', data)
+    result_text = re.sub(r' +', ' <SEP> ', data)
     # add tag syl to indicate syllabification and delete whitespace generated
-    resultText = re.sub(r'\|', ' <SYL> ', resultText)
+    result_text = re.sub(r'\|', ' <SYL> ', result_text)
     # adjustment
-    resultText = re.sub(r'<SEP>  <SYL>', '<SEP> <SYL>', resultText)
-    resultText = re.sub(r'\n <SYL>', '\n<SYL>', resultText)
+    result_text = re.sub(r'<SEP>  <SYL>', '<SEP> <SYL>', result_text)
+    result_text = re.sub(r'\n <SYL>', '\n<SYL>', result_text)
     # add SOV as start of verse
-    resultText = re.sub(r'\n<SYL>', '\n<SOV> <SYL>', resultText)
+    result_text = re.sub(r'\n<SYL>', '\n<SOV> <SYL>', result_text)
     # add EOV as end of verse
-    resultText = re.sub(r'<SEP> \n', '<SEP> <EOV>\n', resultText)
+    result_text = re.sub(r'<SEP> \n', '<SEP> <EOV>\n', result_text)
     # add SOV as start of the first verse
-    resultText = re.sub(r'^ <SYL>', '\n<SOV> <SYL>', resultText)
+    result_text = re.sub(r'^ <SYL>', '\n<SOV> <SYL>', result_text)
     # add EOV as end of last verse
-    resultText = re.sub(r'<SEP> $', '<SEP> <EOV>\n', resultText)
+    result_text = re.sub(r'<SEP> $', '<SEP> <EOV>\n', result_text)
     # delete first empty line
-    resultText = re.sub(r'^\n', '', resultText)
-    return resultText
+    result_text = re.sub(r'^\n', '', result_text)
+    return result_text
 
 
 def read_data():
@@ -88,8 +88,8 @@ def read_data():
     return raw_text
 
 
-def generate_vocabulary(trainingData):
-    train_pt = tf.data.Dataset.from_tensor_slices(trainingData.split('\n'))
+def generate_vocabulary(training_data):
+    train_pt = tf.data.Dataset.from_tensor_slices(training_data.split('\n'))
     bert_tokenizer_params = dict(lower_case=True)
     reserved_tokens = ['<SEP>', '<SYL>', '<SOV>', '<EOV>', '[START]', '[END]']
     bert_vocab_args = dict(
