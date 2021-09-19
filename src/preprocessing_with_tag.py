@@ -90,7 +90,6 @@ def readData():
 
 def generateVocabulary(trainingData):
     train_pt = tf.data.Dataset.from_tensor_slices(trainingData.split('\n'))
-    print(trainingData.split('\n'))
     bert_tokenizer_params = dict(lower_case=True)
     reserved_tokens = ['<SEP>','<SYL>' ,'<SOV>','<EOV>','[START]','[END]']
     bert_vocab_args = dict(
@@ -113,4 +112,4 @@ def generateVocabulary(trainingData):
             print(token, file=f)
 
 
-generateData()
+

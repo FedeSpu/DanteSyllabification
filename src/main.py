@@ -1,5 +1,7 @@
 from src.tokenizer import *
 from src.utility import *
+from src.transformer import *
+from src.preprocessing_with_tag import *
 
 
 import matplotlib.pyplot as plt
@@ -33,7 +35,7 @@ def make_batches(ds):
       .prefetch(tf.data.AUTOTUNE))
 
 
-
+generateData()
 train,val,test = generateDataset()
 tokenizer = Tokenizer(['<SEP>','<SYL>','<SOV>','<EOV>','[START]','[END]'],'../outputs/danteVocabulary.txt')
 train_batches = make_batches(train)
@@ -78,3 +80,4 @@ val_loss = tf.keras.metrics.Mean(name='val_loss')
 val_accuracy = tf.keras.metrics.Mean(name='val_accuracy')
 
 #define transformer
+

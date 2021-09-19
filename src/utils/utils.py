@@ -1,5 +1,5 @@
 # TODO: create batches in out project
-
+import tensorflow as tf
 '''
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
@@ -29,3 +29,12 @@ def make_batches(ds):
 train_batches = make_batches(train_examples)
 val_batches = make_batches(val_examples)
 '''
+
+
+def make_dataset(*sequences, batch_size=64):
+    buffer_size = len(sequences[0])
+
+    dataset = tf.data.Dataset.from_tensor_slices(tuple(sequences)).shuffle(buffer_size)
+    dataset = dataset.batch(batch_size, drop_remainder=True)
+
+    return dataset

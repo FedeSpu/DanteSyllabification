@@ -33,7 +33,9 @@ def preprocessing_text(file_name, file_write = False):
             if p in line_dec:
                 line_dec = line_dec.replace(p, '')
 
+        verses.append('<GO>')
         verses.append(line_dec.rstrip())
+        verses.append('<EOV>')
 
     if file_write:
         f2 = open('../outputs/' + file_name + '_verses.txt', 'wb')
