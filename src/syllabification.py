@@ -1,56 +1,82 @@
-from src.preprocessing import *
-from sklearn.model_selection import train_test_split
 from src.model import *
 from src.utils.utils import *
-import tensorflow as tf
 from src.tokenizer import *
+from src.preprocessing_with_tag import *
 
+
+def tokenize_pairs(X, y):
+    X = tokenizer.tokenize(X)
+    # Convert from ragged to dense, padding with zeros.
+    X = X.to_tensor()
+
+    y = tokenizer.tokenize(y)
+    # Convert from ragged to dense, padding with zeros.
+    y = y.to_tensor()
+
+    return X, y
+
+
+def make_batches(ds):
+    return (
+        ds
+            .cache()
+            .shuffle(BUFFER_SIZE)
+            .batch(BATCH_SIZE)
+            .map(tokenize_pairs, num_parallel_calls=tf.data.AUTOTUNE)
+            .prefetch(tf.data.AUTOTUNE))
+
+
+'''
 file_name_raw = 'inferno'
 file_name_syll = 'inferno_syll'
 random_state = 15
+'''
 
-# 1) Manipulate data and prepare DataSet - Tokenization
+file_training = 'dante_training'
+file_result = 'dante_result_training'
+file_to_read = 'divina_syll_good'
+file_vocabulary = 'dante_vocabulary'
 
-# Pre-processing of both texts: syllabed and none
-verses_raw = preprocessing_text(file_name=file_name_raw, file_write=True)
-# ['<GO>', 'Nel mezzo del cammin di nostra vita', 'mi ritrovai per una selva oscura', 'ché la diritta via era smarrita', '<EOF>']
+BUFFER_SIZE = 20000
+BATCH_SIZE = 64
 
-verses_syll = preprocessing_text(file_name=file_name_syll, file_write=True)
-# ['<GO>', '|Nel |mez|zo |del |cam|min |di |no|stra |vi|ta', '|mi |ri|tro|vai |per |u|na |sel|va o|scu|ra', '|ché |la |di|rit|ta |via |e|ra |smar|ri|ta', '<EOF>']
 
-# From raw data to DataSet object, can be used in train a model
-# Text needs to be converted to numeric representation
-tokenizer = Tokenizer(['<go>', '<eov>'], '../outputs') # tf.keras.preprocessing.text.Tokenizer(lower=True, char_level=False, filters='')
+def make_dataset(*sequences, batch_size=64):
+    buffer_size = len(sequences[0])
 
-# Updates internal vocabulary based on a list of texts
-tokenizer.fit_on_texts(texts=verses_syll)
+    dataset = tf.data.Dataset.from_tensor_slices(tuple(sequences)).shuffle(buffer_size)
+    dataset = dataset.batch(batch_size, drop_remainder=True)
 
-# Transforms each text to a sequence of integers
-verses_raw_enc = tokenizer.texts_to_sequences(verses_raw)
-verses_syll_enc = tokenizer.texts_to_sequences(verses_syll)
+    return dataset
 
-# Pad sequences ensure that all sequences in a list have the same length (default adding 0s, post: add 0s after seq)
-verses_syll_pad = tf.keras.preprocessing.sequence.pad_sequences(verses_syll_enc, padding='post')
-verses_raw_pad = tf.keras.preprocessing.sequence.pad_sequences(verses_raw_enc, padding='post')
 
-# 2) Train the Transformer
-# Split data in training and test sets
-X_train, X_test, y_train, y_test = train_test_split(verses_raw_pad, verses_syll_pad,
-                                                    random_state=random_state, train_size=0.66)
+# 1) Pre-processing data
+# Pre-processing
+# generate_data(file_training, file_result, file_to_read)
+# Generate train, validation and test data
+train, val, test = generate_dataset(file_training, file_result)
+# Tokenization
+tokenizer = Tokenizer(['<SEP>', '<SYL>', '<SOV>', '<EOV>', '[START]', '[END]'],
+                      '../outputs/' + file_vocabulary + '.txt')
 
 # 2.1) Set hyperparameters
 transformer_config = {'num_layers': 4,
-                      'd_model': 256,
-                      'num_heads': 4,
-                      'dff': 1024,
+                      'd_model': 128,  # 256
+                      'num_heads': 8,  # 4
+                      'dff': 512,  # 1024
                       'dropout_rate': 0.1}
 
-vocab_size = len(tokenizer.word_index) + 1
+# vocab_size = len(tokenizer.word_index) + 1
+vocab_size = tokenizer.get_vocab_size().numpy() + 1
+'''
 model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
 X_train = tf.dtypes.cast(X_train, dtype=tf.int64)
 y_train = tf.dtypes.cast(y_train, dtype=tf.int64)
 dataset = make_dataset(X_train, y_train)
-model.train(dataset, 30)
+'''
+model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
+dataset = make_batches(train)
+model.train(dataset, 1)
 
 
 def choose_greedy(logits):
@@ -59,20 +85,26 @@ def choose_greedy(logits):
     return predicted_ids
 
 
-start_symbol = tokenizer.word_index['<go>']
-print(start_symbol)
+'''
+# start_symbol = tokenizer.word_index['<SOV>']
+start_symbol, stop_symbol = tokenizer.tokenize([''])[0]
 start_ten = tf.convert_to_tensor([start_symbol], dtype=tf.int64)
-print(start_ten)
-stop_symbol = tokenizer.word_index['<eov>']
-stop_ten = tf.convert_to_tensor([stop_symbol], dtype=tf.int64)
 
-encoder_input = tokenizer.texts_to_sequences('Nel mezzo del cammin di nostra vita')  # tf.convert_to_tensor(X_test)
+encoder_input = tf.convert_to_tensor(test)
 encoder_input = tf.convert_to_tensor(encoder_input)
 decoder_input = tf.repeat([[start_symbol]], repeats=encoder_input.shape[0], axis=0)
 # decoder_input = tf.convert_to_tensor([start_symbol])
 # decoder_input = tf.expand_dims(decoder_input, 0)
 output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True).write(0, start_ten)
+'''
+start_end = tokenizer.tokenize([''])[0]
+start = start_end[0][tf.newaxis]
+end = start_end[1][tf.newaxis]
 
+# `tf.TensorArray` is required here (instead of a python list) so that the
+# dynamic-loop can be traced by `tf.function`.
+output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True)
+output_array = output_array.write(0, start)
 for i in tf.range(10):
     output = tf.transpose(output_array.stack())  # decoder_input
     # enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
@@ -83,7 +115,7 @@ for i in tf.range(10):
     prediction = prediction[:, -1:, :]
 
     predicted_id = tf.argmax(prediction, axis=-1)
-    output_array = output_array.write(i+1, predicted_id[0])
+    output_array = output_array.write(i + 1, predicted_id[0])
 
     print(predicted_id)
     print(stop_ten)

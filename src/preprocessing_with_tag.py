@@ -5,22 +5,23 @@ import os
 import tensorflow as tf
 from tensorflow_text.tools.wordpiece_vocab import bert_vocab_from_dataset as bert_vocab
 
-file_to_read = "divina_syll_good"
-fileTraining = "danteTraining"
-fileResult = "danteResultTraining"
-fileVocabulary = "danteVocabulary"
+# file_to_read = "divina_syll_good"
+# file_training = "dante_training"
+# file_result = "dante_result_training"
+file_vocabulary = "dante_vocabulary"
 punctuation = r'[?!;:.,«»“‟”()-\[\]]'
 
 
-def generate_data():
-    data = read_data()
+# Pre-processing text and produce output file
+def generate_data(file_training, file_result, file_to_read):
+    data = read_data(file_to_read)
     data, training_data = generate_training_data(data)
     result = generate_result(data)
-    with open('../outputs/' + fileTraining + '.txt', 'w+', encoding='utf-8') as file:
+    with open('../outputs/' + file_training + '.txt', 'w+', encoding='utf-8') as file:
         file.writelines(training_data)
-    with open('../outputs/' + fileResult + '.txt', 'w+', encoding='utf-8') as file:
+    with open('../outputs/' + file_result + '.txt', 'w+', encoding='utf-8') as file:
         file.writelines(result)
-    # nel codice di pietro viene applicato questo ma i risultati sono prettamente simili, la computazione un po' più veloce ma non so il motivo per cui lo usino
+    # TODO: nel codice di pietro viene applicato questo ma i risultati sono prettamente simili, la computazione un po' più veloce ma non so il motivo per cui lo usino
     '''
     text_no_tag = re.sub(rf'<SYL>', ' ', result)
     text_no_tag = re.sub(rf'<SEP>', ' ', text_no_tag)
@@ -34,6 +35,7 @@ def generate_data():
     generate_vocabulary(training_data)
 
 
+# Generate text not syllabied
 def generate_training_data(data):
     # delete empty lines, except the first one and the last one
     data = re.sub(r'\n+', '\n', data)
@@ -41,14 +43,15 @@ def generate_training_data(data):
     data = re.sub(r'^\n', '', data)
     # delete last empty line
     data = data.rstrip('\n')
-    # delte whitespace
+    # delete whitespace
     data = re.sub(r' *\n', '\n', data)
     data = re.sub(r' *$', '', data)
     # delete | indicating syllabification
-    trainingData = re.sub(r'\|', '', data)
-    return data, trainingData
+    training_data = re.sub(r'\|', '', data)
+    return data, training_data
 
 
+# Generate text syllabied with tag
 def generate_result(data):
     # add tag sep to indicate separator
     result_text = re.sub(r' +', ' <SEP> ', data)
@@ -70,7 +73,8 @@ def generate_result(data):
     return result_text
 
 
-def read_data():
+# Read file syllabied, transform for handling
+def read_data(file_to_read):
     with open('../text/' + file_to_read + '.txt', 'r+', encoding='utf-8') as file:
         raw_text = file.read()
     # convert into lower case
@@ -88,13 +92,14 @@ def read_data():
     return raw_text
 
 
+# Generate vocabulary for tokenizer
 def generate_vocabulary(training_data):
     train_pt = tf.data.Dataset.from_tensor_slices(training_data.split('\n'))
     bert_tokenizer_params = dict(lower_case=True)
     reserved_tokens = ['<SEP>', '<SYL>', '<SOV>', '<EOV>', '[START]', '[END]']
     bert_vocab_args = dict(
         # The target vocabulary size
-        vocab_size=200,  # capire perchè è 200 e non 1000/2000
+        vocab_size=1000,  # TODO: capire perchè è 200 e non 1000/2000
         # Reserved tokens that must be included in the vocabulary
         reserved_tokens=reserved_tokens,
         # Arguments for `text.BertTokenizer`
@@ -106,7 +111,7 @@ def generate_vocabulary(training_data):
     pt_vocab = bert_vocab.bert_vocab_from_dataset(
         train_pt.batch(1000).prefetch(2),
         **bert_vocab_args
-    )
-    with open('../outputs/' + fileVocabulary + '.txt', 'w', encoding='utf-8') as f:
+    )  # TODO: 1000 or 200?
+    with open('../outputs/' + file_vocabulary + '.txt', 'w', encoding='utf-8') as f:
         for token in pt_vocab:
             print(token, file=f)

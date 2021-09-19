@@ -5,8 +5,8 @@ from src.preprocessing_with_tag import *
 
 import matplotlib.pyplot as plt
 
-fileTraining = "danteTraining"
-fileResult = "danteResultTraining"
+fileTraining = "dante_training"
+fileResult = "dante_result_training"
 
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
