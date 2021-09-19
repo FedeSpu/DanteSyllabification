@@ -1,5 +1,5 @@
 from src.transformer_utils.custom_schedule import *
-from src.tranformer import *
+from src.transformer import *
 from src.transformer_utils.checkpoint import *
 import time
 

@@ -3,17 +3,16 @@ from src.utility import *
 from src.transformer import *
 from src.preprocessing_with_tag import *
 
-
 import matplotlib.pyplot as plt
 
-
-fileTraining = "danteTraining"
-fileResult = "danteResultTraining"
+fileTraining = "dante_training"
+fileResult = "dante_result_training"
 
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
 
-#can't move these two functions in util.py, gives an error
+
+# can't move these two functions in util.py, gives an error
 def tokenize_pairs(X, y):
     X = tokenizer.tokenize(X)
     # Convert from ragged to dense, padding with zeros.
@@ -25,24 +24,24 @@ def tokenize_pairs(X, y):
 
     return X, y
 
+
 def make_batches(ds):
-  return (
-      ds
-      .cache()
-      .shuffle(BUFFER_SIZE)
-      .batch(BATCH_SIZE)
-      .map(tokenize_pairs, num_parallel_calls=tf.data.AUTOTUNE)
-      .prefetch(tf.data.AUTOTUNE))
+    return (
+        ds
+            .cache()
+            .shuffle(BUFFER_SIZE)
+            .batch(BATCH_SIZE)
+            .map(tokenize_pairs, num_parallel_calls=tf.data.AUTOTUNE)
+            .prefetch(tf.data.AUTOTUNE))
 
 
-generateData()
-train,val,test = generateDataset()
-tokenizer = Tokenizer(['<SEP>','<SYL>','<SOV>','<EOV>','[START]','[END]'],'../outputs/danteVocabulary.txt')
+generate_data()
+train, val, test = generateDataset()
+tokenizer = Tokenizer(['<SEP>', '<SYL>', '<SOV>', '<EOV>', '[START]', '[END]'], '../outputs/danteVocabulary.txt')
 train_batches = make_batches(train)
 val_batches = make_batches(val)
 
-
-#positional encoding
+# positional encoding
 n, d = 2048, 512
 pos_encoding = positional_encoding(n, d)
 pos_encoding = pos_encoding[0]
@@ -60,12 +59,12 @@ plt.colorbar()
 plt.show()
 '''
 
-#hyperparameters
+# hyperparameters
 
 transformer_config = {'num_layers': 4,
-                      'd_model': 256,   #128
-                      'num_heads': 4,   #8
-                      'dff': 1024,      #512
+                      'd_model': 256,  # 128
+                      'num_heads': 4,  # 8
+                      'dff': 1024,  # 512
                       'dropout_rate': 0.1}
 
 learning_rate = CustomSchedule(transformer_config['d_model'])
@@ -79,5 +78,4 @@ train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
 val_loss = tf.keras.metrics.Mean(name='val_loss')
 val_accuracy = tf.keras.metrics.Mean(name='val_accuracy')
 
-#define transformer
-
+# define transformer
