@@ -17,7 +17,7 @@ def add_start_end(ragged, reserved_tokens):
 
 def cleanup_text(reserved_tokens, token_txt):
     # Drop the reserved tokens, except for "[C] and [SYL]".
-    bad_tokens = [re.escape(tok) for tok in reserved_tokens if tok not in ["C", "S", "Y", "N"]]
+    bad_tokens = [re.escape(tok) for tok in reserved_tokens if tok not in ['<SEP>','<SYL>','<EOV>','<SOV>']]
     bad_token_re = "|".join(bad_tokens)
 
     bad_cells = tf.strings.regex_full_match(token_txt, bad_token_re)
@@ -25,10 +25,11 @@ def cleanup_text(reserved_tokens, token_txt):
 
     # Join them into strings.
     result = tf.strings.reduce_join(result, separator='', axis=-1)
-    result = tf.strings.regex_replace(result, 'C', '$')
-    result = tf.strings.regex_replace(result, 'Y', '|')
-    result = tf.strings.regex_replace(result, 'S', ' ')
-    result = tf.strings.regex_replace(result, 'N', '\n')
+    result = tf.strings.regex_replace(result, '<SEP>', ' ')
+    result = tf.strings.regex_replace(result, '<SYL>', '|')
+    #QUESTI DUE FORSE SONO INTULI, SI POTREBBERO CAVARE
+    result = tf.strings.regex_replace(result, '<SOV>', '')
+    result = tf.strings.regex_replace(result, '<EOV>', '')
 
     return result
 
@@ -42,6 +43,8 @@ class Tokenizer(tf.Module):
 
         vocab = pathlib.Path(vocab_path).read_text().splitlines()
         self.vocab = tf.Variable(vocab)
+
+        ## Create the signatures for export:
 
         # Include a tokenize signature for a batch of strings.
         self.tokenize.get_concrete_function(
@@ -93,3 +96,4 @@ class Tokenizer(tf.Module):
     @tf.function
     def get_reserved_tokens(self):
         return tf.constant(self._reserved_tokens)
+
