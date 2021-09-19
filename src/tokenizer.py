@@ -97,4 +97,3 @@ class Tokenizer(tf.Module):
     def get_reserved_tokens(self):
         return tf.constant(self._reserved_tokens)
 
-dante = Tokenizer(['<SEP>','<SYL>','<SOV>','<EOV>','[START]','[END]'],'../outputs/danteVocabulary.txt')

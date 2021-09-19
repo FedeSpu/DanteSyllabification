@@ -64,6 +64,8 @@ def generateResult(data):
     resultText = re.sub(r'^ <SYL>', '\n<SOV> <SYL>', resultText)
     # add EOV as end of last verse
     resultText = re.sub(r'<SEP> $', '<SEP> <EOV>\n', resultText)
+    # delete first empty line
+    resultText = re.sub(r'^\n', '', resultText)
     return resultText
 
 
