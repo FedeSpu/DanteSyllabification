@@ -22,7 +22,6 @@ def generate_data(file_training, file_result, file_to_read):
     with open('../outputs/' + file_result + '.txt', 'w+', encoding='utf-8') as file:
         file.writelines(result)
     # TODO: nel codice di pietro viene applicato questo ma i risultati sono prettamente simili, la computazione un po' più veloce ma non so il motivo per cui lo usino
-    '''
     text_no_tag = re.sub(rf'<SYL>', ' ', result)
     text_no_tag = re.sub(rf'<SEP>', ' ', text_no_tag)
     text_no_tag = re.sub(rf'<SOV>', ' ', text_no_tag)
@@ -31,8 +30,7 @@ def generate_data(file_training, file_result, file_to_read):
     # remove spaces at the beginning of each line
     text_no_tag = re.sub(r'^ ', '', text_no_tag)
     text_no_tag = re.sub(r'\n ', '\n', text_no_tag)
-    '''
-    generate_vocabulary(training_data)
+    generate_vocabulary(text_no_tag)
 
 
 # Generate text not syllabied
@@ -63,11 +61,11 @@ def generate_result(data):
     # add SOV as start of verse
     result_text = re.sub(r'\n<SYL>', '\n<SOV> <SYL>', result_text)
     # add EOV as end of verse
-    result_text = re.sub(r'<SEP> \n', '<SEP> <EOV>\n', result_text)
+    result_text = re.sub(r'\n', '<SEP> <EOV>\n', result_text)
     # add SOV as start of the first verse
     result_text = re.sub(r'^ <SYL>', '\n<SOV> <SYL>', result_text)
     # add EOV as end of last verse
-    result_text = re.sub(r'<SEP> $', '<SEP> <EOV>\n', result_text)
+    result_text = re.sub(r'$', '<SEP> <EOV>\n', result_text)
     # delete first empty line
     result_text = re.sub(r'^\n', '', result_text)
     return result_text
