@@ -52,7 +52,7 @@ def make_dataset(*sequences, batch_size=64):
 
 # 1) Pre-processing data
 # Pre-processing
-generate_data(file_training, file_result, file_to_read)
+# generate_data(file_training, file_result, file_to_read)
 # Generate train, validation and test data
 train, val, test = generate_dataset(file_training, file_result)
 # Tokenization
@@ -76,7 +76,7 @@ dataset = make_dataset(X_train, y_train)
 '''
 model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
 dataset = make_batches(train)
-model.train(dataset, 10)  # TODO: remember to change to 20
+model.train(dataset, 1)  # TODO: remember to change to 20
 
 line = 'nel mezzo del cammin di nostra vita'
 line = tf.convert_to_tensor([line])
@@ -97,13 +97,13 @@ end = start_end[1][tf.newaxis]
 
 output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True)
 output_array = output_array.write(0, start)
+tra = model.get_transformer()
 for i in tf.range(10):
     output = tf.transpose(output_array.stack())  # decoder_input
-    enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
+    # enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
 
     # enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
     # enc_output = model.get_transformer().encoder(encoder_input, False, enc_padding_mask)
-    tra = model.get_transformer()
     predictions, _ = tra([encoder_input, output], False)
 
     predictions = predictions[:, -1:, :]
@@ -126,6 +126,7 @@ for i in tf.range(10):
 
     output = tf.concat([tf.cast(output, dtype=tf.int64), tf.cast(predicted_ids, dtype=tf.int64), ], axis=1)
     '''
+output = tf.transpose(output_array.stack())
 # print(output)
 stripped_output = tokenizer.detokenize(output)[0]
 # list(map(lambda x: x.split('<EOV>')[0], tokenizer.sequences_to_texts(output.numpy())))
