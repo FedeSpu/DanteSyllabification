@@ -23,6 +23,9 @@ class ModelTransformer(object):
         self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
+        #added these two
+        self.val_loss = tf.keras.metrics.Mean(name='val_loss')
+        self.val_accuracy = tf.keras.metrics.Mean(name='val_accuracy')
 
         # TRAINING & CHECKPOINT
         # TODO: Are those important?
@@ -68,15 +71,19 @@ class ModelTransformer(object):
         self.train_loss(loss)
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
-    def train(self, batches, EPOCHS):
+    def train(self, train,val, EPOCHS):
         for epoch in range(EPOCHS):
             start = time.time()
 
             self.train_loss.reset_states()
             self.train_accuracy.reset_states()
 
-            # inp -> portuguese, tar -> english
-            for (batch, (inp, tar)) in enumerate(batches):
+            #added these two
+            self.val_loss.reset_states()
+            self.val_accuracy.reset_states()
+
+            # inp -> X, tar -> Y
+            for (batch, (inp, tar)) in enumerate(train):
                 self.train_step(inp=inp, tar=tar)
 
                 if batch % 50 == 0:
@@ -88,8 +95,22 @@ class ModelTransformer(object):
                 ckpt_save_path = self.cpkt_manager.save()
                 print(f'Saving checkpoint for epoch {epoch + 1} at {ckpt_save_path}')
 
-            print(f'Epoch {epoch + 1} Loss {self.train_loss.result():.4f} Accuracy {self.train_accuracy.result():.4f}')
+        #added the part for the validation dataset
+            #-----
+            for val_entry in val:
+                val_inp = val_entry[0]
+                val_tar = val_entry[1]
+                val_tar_inp = val_tar[:, :-1]
+                val_tar_real = val_tar[:, 1:]
+                with tf.GradientTape() as tape:
+                    predictions, _ = self.transformer([val_inp, val_tar_inp],training=False)
+                loss = loss_function(val_tar_real, predictions)
+                self.val_loss(loss)
+                self.val_accuracy(accuracy_function(val_tar_real, predictions))
+            #-----
 
+            print(f'Epoch {epoch + 1} Loss {self.train_loss.result():.4f} Accuracy {self.train_accuracy.result():.4f}')
+            print(f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
             print(f'Time taken for 1 epoch: {time.time() - start:.2f} secs\n')
 
     def get_transformer(self):

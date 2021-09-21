@@ -9,7 +9,7 @@ from tensorflow_text.tools.wordpiece_vocab import bert_vocab_from_dataset as ber
 # file_training = "dante_training"
 # file_result = "dante_result_training"
 file_vocabulary = "dante_vocabulary"
-punctuation = r'[?!;:.,«»“‟”()-\[\]]'
+punctuation = r'[?!;:.,«»"“‟”()\-—\[\]]'
 
 
 # Pre-processing text and produce output file
@@ -22,10 +22,10 @@ def generate_data(file_training, file_result, file_to_read):
     with open('../outputs/' + file_result + '.txt', 'w+', encoding='utf-8') as file:
         file.writelines(result)
     # TODO: nel codice di pietro viene applicato questo ma i risultati sono prettamente simili, la computazione un po' più veloce ma non so il motivo per cui lo usino
-    text_no_tag = re.sub(rf'<SYL>', ' ', result)
-    text_no_tag = re.sub(rf'<SEP>', ' ', text_no_tag)
-    text_no_tag = re.sub(rf'<SOV>', ' ', text_no_tag)
-    text_no_tag = re.sub(rf'<EOV>', ' ', text_no_tag)
+    text_no_tag = re.sub(rf'Y', ' ', result)
+    text_no_tag = re.sub(rf'S', ' ', text_no_tag)
+    text_no_tag = re.sub(rf'T', ' ', text_no_tag)
+    text_no_tag = re.sub(rf'E', ' ', text_no_tag)
     text_no_tag = re.sub(r' +', f' ', text_no_tag)
     # remove spaces at the beginning of each line
     text_no_tag = re.sub(r'^ ', '', text_no_tag)
@@ -42,6 +42,7 @@ def generate_training_data(data):
     # delete last empty line
     data = data.rstrip('\n')
     # delete whitespace
+    data = re.sub(r'\n *', '\n', data)
     data = re.sub(r' *\n', '\n', data)
     data = re.sub(r' *$', '', data)
     # delete | indicating syllabification
@@ -52,20 +53,20 @@ def generate_training_data(data):
 # Generate text syllabied with tag
 def generate_result(data):
     # add tag sep to indicate separator
-    result_text = re.sub(r' +', ' <SEP> ', data)
+    result_text = re.sub(r' +', ' S ', data)
     # add tag syl to indicate syllabification and delete whitespace generated
-    result_text = re.sub(r'\|', ' <SYL> ', result_text)
+    result_text = re.sub(r'\|', ' Y ', result_text)
     # adjustment
-    result_text = re.sub(r'<SEP>  <SYL>', '<SEP> <SYL>', result_text)
-    result_text = re.sub(r'\n <SYL>', '\n<SYL>', result_text)
+    result_text = re.sub(r'S  Y', 'S Y', result_text)
+    result_text = re.sub(r'\n Y', '\nY', result_text)
     # add SOV as start of verse
-    result_text = re.sub(r'\n<SYL>', '\n<SOV> <SYL>', result_text)
+    result_text = re.sub(r'\nY', '\nT Y', result_text)
     # add EOV as end of verse
-    result_text = re.sub(r'\n', '<SEP> <EOV>\n', result_text)
+    result_text = re.sub(r'\n', ' S E\n', result_text)
     # add SOV as start of the first verse
-    result_text = re.sub(r'^ <SYL>', '\n<SOV> <SYL>', result_text)
+    result_text = re.sub(r'^ Y', '\nT Y', result_text)
     # add EOV as end of last verse
-    result_text = re.sub(r'$', '<SEP> <EOV>\n', result_text)
+    result_text = re.sub(r'$', ' S E\n', result_text)
     # delete first empty line
     result_text = re.sub(r'^\n', '', result_text)
     return result_text
@@ -79,12 +80,12 @@ def read_data(file_to_read):
     raw_text = raw_text.lower()
     # remove sentences such as canto V
     raw_text = re.sub(r'.* • canto .*', '', raw_text)
+    # remove punctuation
+    raw_text = re.sub(punctuation, '', raw_text)
     # remove enumeration
     raw_text = re.sub(r'\n *\d* ', '\n', raw_text)
     # replace auxiliary characters
     raw_text = re.sub(r'[’‘\']', '’', raw_text)
-    # remove punctuation
-    raw_text = re.sub(punctuation, '', raw_text)
     # delete first empty line
     raw_text = re.sub(r'^\n\n', '', raw_text)
     return raw_text
@@ -94,10 +95,10 @@ def read_data(file_to_read):
 def generate_vocabulary(training_data):
     train_pt = tf.data.Dataset.from_tensor_slices(training_data.split('\n'))
     bert_tokenizer_params = dict(lower_case=True)
-    reserved_tokens = ['<SEP>', '<SYL>', '<SOV>', '<EOV>', '[START]', '[END]']
+    reserved_tokens = ['S', 'Y', 'T', 'E', '[START]', '[END]']
     bert_vocab_args = dict(
         # The target vocabulary size
-        vocab_size=1000,  # TODO: capire perchè è 200 e non 1000/2000
+        vocab_size=200,  # TODO: capire perchè è 200 e non 1000/2000
         # Reserved tokens that must be included in the vocabulary
         reserved_tokens=reserved_tokens,
         # Arguments for `text.BertTokenizer`
@@ -113,3 +114,11 @@ def generate_vocabulary(training_data):
     with open('../outputs/' + file_vocabulary + '.txt', 'w', encoding='utf-8') as f:
         for token in pt_vocab:
             print(token, file=f)
+
+
+file_training = 'dante_training'
+file_result = 'dante_result_training'
+file_to_read = 'divina_syll_good'
+
+
+generate_data(file_training, file_result, file_to_read)
