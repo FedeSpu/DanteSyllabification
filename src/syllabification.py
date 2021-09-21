@@ -3,7 +3,7 @@ from src.utils.utils import *
 from src.tokenizer import *
 from src.preprocessing_with_tag import *
 
-
+#OK
 def tokenize_pairs(X, y):
     X = tokenizer.tokenize(X)
     # Convert from ragged to dense, padding with zeros.
@@ -15,7 +15,7 @@ def tokenize_pairs(X, y):
 
     return X, y
 
-
+#OK
 def make_batches(ds):
     return (
         ds
@@ -32,11 +32,13 @@ file_name_syll = 'inferno_syll'
 random_state = 15
 '''
 
+#OK
 file_training = 'dante_training'
 file_result = 'dante_result_training'
 file_to_read = 'divina_syll_good'
 file_vocabulary = 'dante_vocabulary'
 
+#OK
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
 
@@ -52,11 +54,11 @@ def make_dataset(*sequences, batch_size=64):
 
 # 1) Pre-processing data
 # Pre-processing
-# generate_data(file_training, file_result, file_to_read)
+generate_data(file_training, file_result, file_to_read)
 # Generate train, validation and test data
 train, val, test = generate_dataset(file_training, file_result)
 # Tokenization
-tokenizer = Tokenizer(['<SEP>', '<SYL>', '<SOV>', '<EOV>', '[START]', '[END]'],
+tokenizer = Tokenizer(['S', 'Y', 'T', 'E', '[START]', '[END]'],
                       '../outputs/' + file_vocabulary + '.txt')
 
 # 2.1) Set hyperparameters
@@ -75,65 +77,54 @@ y_train = tf.dtypes.cast(y_train, dtype=tf.int64)
 dataset = make_dataset(X_train, y_train)
 '''
 model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
-dataset = make_batches(train)
-model.train(dataset, 1)
+train_batches = make_batches(train)   #dataset = make_batches(train) (Codice Fede)
+val_batches = make_batches(val)     #dataset = make_batches(val)   (Codice Fede)
+model.train(train_batches,val_batches, 20)  # TODO: remember to change to 20
 
-
-def choose_greedy(logits):
-    # select the last character from the seq_len dimension
-    predicted_ids = tf.argmax(logits[:, -1:, :], axis=-1)
-    return predicted_ids
-
-
+line = 'nel mezzo del cammin di nostra vita'
+#OK
+line = tf.convert_to_tensor([line])
+#OK
+line = tokenizer.tokenize(line).to_tensor()
+encoder_input = line
 '''
-# start_symbol = tokenizer.word_index['<SOV>']
-start_symbol, stop_symbol = tokenizer.tokenize([''])[0]
-start_ten = tf.convert_to_tensor([start_symbol], dtype=tf.int64)
-
-encoder_input = tf.convert_to_tensor(test)
-encoder_input = tf.convert_to_tensor(encoder_input)
-decoder_input = tf.repeat([[start_symbol]], repeats=encoder_input.shape[0], axis=0)
-# decoder_input = tf.convert_to_tensor([start_symbol])
-# decoder_input = tf.expand_dims(decoder_input, 0)
-output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True).write(0, start_ten)
+test_line = make_batches(test)  # line
+for (batch, (inp, tar)) in enumerate(test_line):
+    encoder_input = inp
+    break
 '''
-start_end = tokenizer.tokenize([''])[0]
-start = start_end[0][tf.newaxis]
-end = start_end[1][tf.newaxis]
+# inp, _ = test_line[0]
+# encoder_input = inp
 
-# `tf.TensorArray` is required here (instead of a python list) so that the
-# dynamic-loop can be traced by `tf.function`.
-output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True)
-output_array = output_array.write(0, start)
-for i in tf.range(10):
-    output = tf.transpose(output_array.stack())  # decoder_input
-    # enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
-    # enc_output = model.get_transformer().encoder(encoder_input, False, enc_padding_mask)
-    tra = model.get_transformer()
-    prediction, _ = tra([encoder_input, output], False)
+start,end = tokenizer.tokenize([''])[0]
+output = tf.convert_to_tensor([start])
+output = tf.expand_dims(output, 0)
+tra = model.get_transformer()
 
-    prediction = prediction[:, -1:, :]
 
-    predicted_id = tf.argmax(prediction, axis=-1)
-    output_array = output_array.write(i + 1, predicted_id[0])
+for i in range(100):
+    enc_padding_mask, combined_mask, dec_padding_mask = tra.create_masks(encoder_input, output)
+    predictions, attention_weights = tra.call((encoder_input, output),False)
 
-    print(predicted_id)
-    print(stop_ten)
-    if predicted_id == stop_ten:
+    predictions = predictions[:, -1:, :]
+
+    predicted_id = tf.argmax(predictions, axis=-1)
+    output = tf.concat([output, predicted_id], axis=-1)
+
+    # print(stop_ten)
+    if predicted_id == end:
         break
-    # print(encoder_input)
-    # p, aw = model.get_transformer().call((encoder_input, output), False)
 
-    # for _ in range(10):
-    '''
+text = tokenizer.detokenize(output)[0]  # shape: ()
+
+
+'''
     enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
     dec_outuput, _ = model.get_transformer().decoder(output, enc_output, False, combined_mask, dec_padding_mask)
     predictions = model.get_transformer().final_layer(dec_outuput)
     predicted_ids = choose_greedy(predictions)
 
     output = tf.concat([tf.cast(output, dtype=tf.int64), tf.cast(predicted_ids, dtype=tf.int64), ], axis=1)
-    '''
-# print(output)
-stripped_output = list(map(lambda x: x.split('<EOV>')[0], tokenizer.sequences_to_texts(output.numpy())))
-# stripped_output = list(map(strip_tokens, stripped_output))
-print(stripped_output)
+'''
+predicted = text.numpy().decode('utf-8')
+print(predicted)
