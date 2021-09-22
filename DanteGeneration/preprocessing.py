@@ -5,24 +5,29 @@ import os
 import tensorflow as tf
 from tensorflow_text.tools.wordpiece_vocab import bert_vocab_from_dataset as bert_vocab
 
-file_vocabulary = "dante_vocabulary"
+#TAG USATI
+#B => beginning of the line
+#Y => sYllable
+#E => end of the line
+#T => Triplet
+
+file_vocabulary = "dante_vocabulary_gen"
 punctuation = r'[?!;:.,«»"“‟”()\-—\[\]]'
 
 
-# Pre-processing text and produce output file
 def generate_data(file_training, file_result, file_to_read):
     data = read_data(file_to_read)
     data, training_data = generate_training_data(data)
     result = generate_result(data)
-    with open('../outputs/' + file_training + '.txt', 'w+', encoding='utf-8') as file:
+    with open('../outputs_gen/' + file_training + '.txt', 'w+', encoding='utf-8') as file:
         file.writelines(training_data)
-    with open('../outputs/' + file_result + '.txt', 'w+', encoding='utf-8') as file:
+    with open('../outputs_gen/' + file_result + '.txt', 'w+', encoding='utf-8') as file:
         file.writelines(result)
-    # TODO: nel codice di pietro viene applicato questo ma i risultati sono prettamente simili, la computazione un po' più veloce ma non so il motivo per cui lo usino
     text_no_tag = re.sub(rf'Y', ' ', result)
     text_no_tag = re.sub(rf'S', ' ', text_no_tag)
     text_no_tag = re.sub(rf'T', ' ', text_no_tag)
     text_no_tag = re.sub(rf'E', ' ', text_no_tag)
+    text_no_tag = re.sub(rf'B', ' ', text_no_tag)
     text_no_tag = re.sub(r' +', f' ', text_no_tag)
     # remove spaces at the beginning of each line
     text_no_tag = re.sub(r'^ ', '', text_no_tag)
@@ -30,46 +35,6 @@ def generate_data(file_training, file_result, file_to_read):
     generate_vocabulary(text_no_tag)
 
 
-# Generate text not syllabied
-def generate_training_data(data):
-    # delete empty lines, except the first one and the last one
-    data = re.sub(r'\n+', '\n', data)
-    # delete first empty line
-    data = re.sub(r'^\n', '', data)
-    # delete last empty line
-    data = data.rstrip('\n')
-    # delete whitespace
-    data = re.sub(r'\n *', '\n', data)
-    data = re.sub(r' *\n', '\n', data)
-    data = re.sub(r' *$', '', data)
-    # delete | indicating syllabification
-    training_data = re.sub(r'\|', '', data)
-    return data, training_data
-
-
-# Generate text syllabied with tag
-def generate_result(data):
-    # add tag sep to indicate separator
-    result_text = re.sub(r' +', ' S ', data)
-    # add tag syl to indicate syllabification and delete whitespace generated
-    result_text = re.sub(r'\|', ' Y ', result_text)
-    # adjustment
-    result_text = re.sub(r'S  Y', 'S Y', result_text)
-    result_text = re.sub(r'\n Y', '\nY', result_text)
-    # add SOV as start of verse
-    result_text = re.sub(r'\nY', '\nT Y', result_text)
-    # add EOV as end of verse
-    result_text = re.sub(r'\n', ' E\n', result_text)
-    # add SOV as start of the first verse
-    result_text = re.sub(r'^ Y', '\nT Y', result_text)
-    # add EOV as end of last verse
-    result_text = re.sub(r'$', ' E\n', result_text)
-    # delete first empty line
-    result_text = re.sub(r'^\n', '', result_text)
-    return result_text
-
-
-# Read file syllabied, transform for handling
 def read_data(file_to_read):
     with open('../text/' + file_to_read + '.txt', 'r+', encoding='utf-8') as file:
         raw_text = file.read()
@@ -87,12 +52,56 @@ def read_data(file_to_read):
     raw_text = re.sub(r'^\n\n', '', raw_text)
     return raw_text
 
+def generate_training_data(data):
+    #add tag T indicating triplet
+    data = re.sub(r'.\n\n\|', 'T\n\n|', data)
+    # delete empty lines, except the first one and the last one
+    data = re.sub(r'\n+', '\n', data)
+    # delete first empty line
+    data = re.sub(r'^\n', '', data)
+    # delete last empty line
+    data = data.rstrip('\n')
+    # delete whitespace
+    data = re.sub(r'\n *', '\n', data)
+    data = re.sub(r' *\n', '\n', data)
+    data = re.sub(r' *$', '', data)
+    # delete | indicating syllabification
+    training_data = re.sub(r'\|', '', data)
+    # add tag sep to indicate separator
+    training_data = re.sub(r' *T', ' T',  training_data)
+    return data, training_data
 
-# Generate vocabulary for tokenizer
+
+def generate_result(data):
+    # add tag sep to indicate separator
+    result_text = re.sub(r' *T', ' T', data)
+    # add tag sep to indicate separator
+    result_text = re.sub(r' +', ' S ', result_text)
+    result_text = re.sub(r'S T', 'T', result_text)
+    # add tag syl to indicate syllabification and delete whitespace generated
+    result_text = re.sub(r'\|', ' Y ', result_text)
+    # adjustment
+    result_text = re.sub(r'S  Y', 'S Y', result_text)
+    result_text = re.sub(r'\n Y', '\nY', result_text)
+    # add B as beginning of the verse
+    result_text = re.sub(r'\nY', '\nB Y', result_text)
+    # add E as end of verse
+    result_text = re.sub(r'\n', ' E\n', result_text)
+    # add B as start of the first verse
+    result_text = re.sub(r'^ Y', '\nB Y', result_text)
+    # add EOV as end of last verse
+    result_text = re.sub(r'$', ' E', result_text)
+    # delete first empty line
+    result_text = re.sub(r'^\n', '', result_text)
+    #switch T E
+    result_text = re.sub(r'T E', 'E T', result_text)
+    return result_text
+
+
 def generate_vocabulary(training_data):
     train_pt = tf.data.Dataset.from_tensor_slices(training_data.split('\n'))
     bert_tokenizer_params = dict(lower_case=True)
-    reserved_tokens = ['S', 'Y', 'T', 'E', '[START]', '[END]']
+    reserved_tokens = ['S','Y','T','E','B','[START]','[END]']
     bert_vocab_args = dict(
         # The target vocabulary size
         vocab_size=200,  # TODO: capire perchè è 200 e non 1000/2000
@@ -105,17 +114,12 @@ def generate_vocabulary(training_data):
     )
 
     pt_vocab = bert_vocab.bert_vocab_from_dataset(
-        train_pt.batch(1000).prefetch(2),
+        train_pt.batch(200).prefetch(2),
         **bert_vocab_args
-    )  # TODO: 1000 or 200?
-    with open('../outputs/' + file_vocabulary + '.txt', 'w', encoding='utf-8') as f:
+    )
+    with open('../outputs_gen/' + file_vocabulary + '.txt', 'w', encoding='utf-8') as f:
         for token in pt_vocab:
             print(token, file=f)
 
 
-file_training = 'dante_training'
-file_result = 'dante_result_training'
-file_to_read = 'divina_syll_good'
 
-
-generate_data(file_training, file_result, file_to_read)

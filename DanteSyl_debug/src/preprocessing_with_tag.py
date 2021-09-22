@@ -5,6 +5,9 @@ import os
 import tensorflow as tf
 from tensorflow_text.tools.wordpiece_vocab import bert_vocab_from_dataset as bert_vocab
 
+# file_to_read = "divina_syll_good"
+# file_training = "dante_training"
+# file_result = "dante_result_training"
 file_vocabulary = "dante_vocabulary"
 punctuation = r'[?!;:.,«»"“‟”()\-—\[\]]'
 
@@ -18,7 +21,7 @@ def generate_data(file_training, file_result, file_to_read):
         file.writelines(training_data)
     with open('../outputs/' + file_result + '.txt', 'w+', encoding='utf-8') as file:
         file.writelines(result)
-    # TODO: nel codice di pietro viene applicato questo ma i risultati sono prettamente simili, la computazione un po' più veloce ma non so il motivo per cui lo usino
+
     text_no_tag = re.sub(rf'Y', ' ', result)
     text_no_tag = re.sub(rf'S', ' ', text_no_tag)
     text_no_tag = re.sub(rf'T', ' ', text_no_tag)
@@ -44,8 +47,8 @@ def generate_training_data(data):
     data = re.sub(r' *$', '', data)
     # delete | indicating syllabification
     training_data = re.sub(r'\|', '', data)
+    training_data = re.sub(r' +', ' S ', training_data)
     return data, training_data
-
 
 # Generate text syllabied with tag
 def generate_result(data):
@@ -91,7 +94,7 @@ def read_data(file_to_read):
 # Generate vocabulary for tokenizer
 def generate_vocabulary(training_data):
     train_pt = tf.data.Dataset.from_tensor_slices(training_data.split('\n'))
-    bert_tokenizer_params = dict(lower_case=True)
+    bert_tokenizer_params = dict(lower_case=False)
     reserved_tokens = ['S', 'Y', 'T', 'E', '[START]', '[END]']
     bert_vocab_args = dict(
         # The target vocabulary size
