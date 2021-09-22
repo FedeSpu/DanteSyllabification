@@ -27,11 +27,11 @@ def cleanup_text(reserved_tokens, token_txt):
     result = tf.strings.reduce_join(result, separator='', axis=-1)
     result = tf.strings.regex_replace(result, '[START]', '')
     result = tf.strings.regex_replace(result, '[END]', '')
-    result = tf.strings.regex_replace(result, 'S', 'S')
-    result = tf.strings.regex_replace(result, 'Y', 'Y')
+    result = tf.strings.regex_replace(result, 'S', ' ')
+    result = tf.strings.regex_replace(result, 'Y', '|')
     # TODO: Useless?
-    result = tf.strings.regex_replace(result, 'E', 'B')
-    result = tf.strings.regex_replace(result, 'T', 'T')
+    result = tf.strings.regex_replace(result, 'E', '')
+    result = tf.strings.regex_replace(result, 'T', '')
 
     return result
 

@@ -43,10 +43,10 @@ tokenizer = TokenizerGen(['S', 'Y', 'T', 'E', 'B' , '[START]', '[END]'],
 train_batches = make_batches(train)
 val_batches = make_batches(val)
 
-transformer_config = {'num_layers': 6, #4
-                      'd_model': 512, #128
+transformer_config = {'num_layers': 4, #6
+                      'd_model': 128, #512
                       'num_heads': 8,
-                      'dff': 2048, #512
+                      'dff': 512, #2048
                       'dropout_rate': 0.1}
 
 vocab_size = tokenizer.get_vocab_size().numpy() + 1
