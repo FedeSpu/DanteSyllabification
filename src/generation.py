@@ -1,5 +1,5 @@
 from src.model import *
-from src.tokenizer import *
+from src.tokenizer_gen import *
 from src.preprocessing_gen import *
 from src.utils.utils import *
 
@@ -37,7 +37,7 @@ file_vocabulary = "dante_vocabulary_gen"
 generate_data(file_training,file_result,file_to_read)
 train, val, test = load_gen_dataset()
 
-tokenizer = Tokenizer(['S', 'Y', 'T', 'E', 'B' , '[START]', '[END]'],
+tokenizer = TokenizerGen(['S', 'Y', 'T', 'E', 'B' , '[START]', '[END]'],
                       '../outputs_gen/' + file_vocabulary + '.txt')
 
 train_batches = make_batches(train)
@@ -53,5 +53,7 @@ vocab_size = tokenizer.get_vocab_size().numpy() + 1
 model = ModelTransformer(transformer_config, vocab_size, vocab_size)
 train_batches = make_batches(train)   #dataset = make_batches(train) (Codice Fede)
 val_batches = make_batches(val)       #dataset = make_batches(val)   (Codice Fede)
-model.train(train_batches,val_batches, 5)  # TODO: remember to change to 20
-model.generate(tokenizer)
+model.train(train_batches,val_batches, 1)  # TODO: remember to change to 20
+
+sentence = 'ove udirai le disperate strida vedrai li antichi spiriti dolenti ch’ a la seconda morte ciascun grida'
+print(model.generate(tf.constant(sentence),tokenizer))

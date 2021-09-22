@@ -2,7 +2,7 @@ from src.transformer_utils.custom_schedule import *
 from src.transformer import *
 from src.transformer_utils.checkpoint import *
 import time
-
+import random
 
 EPOCHS = 50
 
@@ -111,8 +111,8 @@ class ModelTransformer(object):
         end = start_end[1][tf.newaxis]
         output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True)
         output_array = output_array.write(0, start)
+        output = tf.transpose(output_array.stack())
         for i in tf.range(50):
-            output = tf.transpose(output_array.stack())
             predictions, _ = self.transformer([encoder_input, output], training=False)
             predictions = predictions[:, -1:, :]  # (batch_size, 1, vocab_size)
             predicted_id = tf.argmax(predictions, axis=-1)
@@ -124,7 +124,7 @@ class ModelTransformer(object):
         text = tokenizer.detokenize(output)[0]
         return text
 
-    def generate(self, tokenizer):
+    def generate(self,sentence, tokenizer):
         assert isinstance(sentence, tf.Tensor)
         if len(sentence.shape) == 0:
             sentence = sentence[tf.newaxis]
@@ -133,18 +133,24 @@ class ModelTransformer(object):
         start_end = tokenizer.tokenize([''])[0]
         start = start_end[0][tf.newaxis]
         end = start_end[1][tf.newaxis]
+
+
         output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True)
         output_array = output_array.write(0, start)
         output = tf.transpose(output_array.stack())
+
+        predictions, _ = self.transformer([encoder_input, output], training=False)
+        predictions = predictions[:, -1:, :]
         predicted_id = tf.argmax(predictions, axis=-1)
-        output_array = output_array.write(0, predicted_id[0])
+        output_array = output_array.write(1, predicted_id[0])
         for i in tf.range(1, 50):
             predictions, _ = self.transformer([encoder_input, output], training=False)
             predictions = predictions[:, -1:, :]  # (batch_size, 1, vocab_size)
             predictions = tf.nn.softmax(predictions, axis=-1)
             top = tf.math.top_k(predictions.numpy()[0][0])
-            id = random.choices(top.indices.numpy(), weights=top.values.numpy(), k=1)
-            id = tf.convert_to_tensor([id], dtype=tf.int64)
+            predicted_id = random.choices(top.indices.numpy(), weights=top.values.numpy(), k=1)
+            predicted_id = tf.convert_to_tensor([predicted_id ], dtype=tf.int64)
+            output_array = output_array.write(i + 1, predicted_id[0])
             if predicted_id == end:
                 break
         output = tf.transpose(output_array.stack())
