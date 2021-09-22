@@ -1,8 +1,7 @@
 from src.model import *
 from src.utils.utils import *
 from src.tokenizer import *
-from src.preprocessing_with_tag import *
-
+from src.preprocessing_syl import *
 
 #OK
 def tokenize_pairs(X, y):
@@ -62,6 +61,7 @@ train, val, test = generate_dataset(file_training, file_result)
 tokenizer = Tokenizer(['S', 'Y', 'T', 'E', '[START]', '[END]'],
                       '../outputs/' + file_vocabulary + '.txt')
 
+
 # 2.1) Set hyperparameters
 transformer_config = {'num_layers': 4,
                       'd_model': 128,  # 256
@@ -70,24 +70,30 @@ transformer_config = {'num_layers': 4,
                       'dropout_rate': 0.1}
 
 # vocab_size = len(tokenizer.word_index) + 1
-vocab_size = tokenizer.get_vocab_size().numpy() + 1
+vocab_size = tokenizer.get_vocab_size().numpy()+1
 '''
 model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
 X_train = tf.dtypes.cast(X_train, dtype=tf.int64)
 y_train = tf.dtypes.cast(y_train, dtype=tf.int64)
 dataset = make_dataset(X_train, y_train)
 '''
-model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
+model = ModelTransformer(transformer_config, vocab_size, vocab_size)
 train_batches = make_batches(train)   #dataset = make_batches(train) (Codice Fede)
 val_batches = make_batches(val)       #dataset = make_batches(val)   (Codice Fede)
-model.train(train_batches,val_batches, 5)  # TODO: remember to change to 20
+model.train(train_batches,val_batches, 1)  # TODO: remember to change to 20
 
-line = 'nel  mezzo  del  cammin  di  nostra  vita'
+#line = 'nel mezzo del cammin di nostra vita'
+line = 'la mamma si lava bene i denti'
 #OK
-line = tf.convert_to_tensor([line])
+#line = tf.convert_to_tensor([line])
 #OK
-line = tokenizer.tokenize(line).to_tensor()
-encoder_input = line
+#line = tokenizer.tokenize(line).to_tensor()
+#encoder_input = line
+
+print(model.syllabify(tf.constant(line),tokenizer))
+
+
+
 '''
 test_line = make_batches(test)  # line
 for (batch, (inp, tar)) in enumerate(test_line):
@@ -96,7 +102,7 @@ for (batch, (inp, tar)) in enumerate(test_line):
 '''
 # inp, _ = test_line[0]
 # encoder_input = inp
-
+'''
 start,end = tokenizer.tokenize([''])[0]
 output = tf.convert_to_tensor([start])
 output = tf.expand_dims(output, 0)
@@ -117,7 +123,9 @@ for i in range(100):
         break
 
 text = tokenizer.detokenize(output)[0]  # shape: ()
-
+predicted = text.numpy().decode('utf-8')
+print(predicted)
+'''
 
 '''
     enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
@@ -127,5 +135,3 @@ text = tokenizer.detokenize(output)[0]  # shape: ()
 
     output = tf.concat([tf.cast(output, dtype=tf.int64), tf.cast(predicted_ids, dtype=tf.int64), ], axis=1)
 '''
-predicted = text.numpy().decode('utf-8')
-print(predicted)
