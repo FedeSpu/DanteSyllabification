@@ -3,6 +3,7 @@ import tensorflow as tf
 
 def loss_function(real, pred):
     mask = tf.math.logical_not(tf.math.equal(real, 0))
+    loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
     loss_ = loss_object(real, pred)
 
     mask = tf.cast(mask, dtype=loss_.dtype)
@@ -22,6 +23,4 @@ def accuracy_function(real, pred):
     return tf.reduce_sum(accuracies) / tf.reduce_sum(mask)
 
 
-# TODO: Where put this call?
-loss_object = tf.keras.losses.SparseCategoricalCrossentropy(
-    from_logits=True, reduction='none')
+

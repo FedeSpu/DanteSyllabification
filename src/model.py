@@ -9,6 +9,7 @@ class ModelTransformer(object):
         super(ModelTransformer, self).__init__()
         self.tokenizer = tokenizer
         # OPTIMIZER
+        #OK
         self.learning_rate = CustomSchedule(config['d_model'])
         self.optimizer = tf.keras.optimizers.Adam(self.learning_rate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
@@ -20,7 +21,6 @@ class ModelTransformer(object):
         '''
 
         # LOSS & METRICS
-        self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
         #added these two
@@ -83,6 +83,7 @@ class ModelTransformer(object):
             self.val_accuracy.reset_states()
 
             # inp -> X, tar -> Y
+            #FIXMEforse da cambiare
             for (batch, (inp, tar)) in enumerate(train):
                 self.train_step(inp=inp, tar=tar)
 

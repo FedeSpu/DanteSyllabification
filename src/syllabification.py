@@ -3,6 +3,7 @@ from src.utils.utils import *
 from src.tokenizer import *
 from src.preprocessing_with_tag import *
 
+
 #OK
 def tokenize_pairs(X, y):
     X = tokenizer.tokenize(X)
@@ -78,10 +79,10 @@ dataset = make_dataset(X_train, y_train)
 '''
 model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
 train_batches = make_batches(train)   #dataset = make_batches(train) (Codice Fede)
-val_batches = make_batches(val)     #dataset = make_batches(val)   (Codice Fede)
-model.train(train_batches,val_batches, 20)  # TODO: remember to change to 20
+val_batches = make_batches(val)       #dataset = make_batches(val)   (Codice Fede)
+model.train(train_batches,val_batches, 5)  # TODO: remember to change to 20
 
-line = 'nel mezzo del cammin di nostra vita'
+line = 'nel  mezzo  del  cammin  di  nostra  vita'
 #OK
 line = tf.convert_to_tensor([line])
 #OK
