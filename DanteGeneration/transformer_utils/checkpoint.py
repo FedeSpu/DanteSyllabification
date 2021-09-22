@@ -1,4 +1,4 @@
-from src.transformer_utils.loss import *
+from DanteGeneration.transformer_utils.loss import *
 
 
 def create_checkpoint(transformer, optimizer):

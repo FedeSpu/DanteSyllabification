@@ -1,5 +1,6 @@
 import tensorflow as tf
-from src.transformer_utils.utils import *
+from DanteGeneration.transformer_utils.utils import *
+from DanteGeneration.transformer_utils.multi_head_attention import *
 
 
 class DecoderLayer(tf.keras.layers.Layer):

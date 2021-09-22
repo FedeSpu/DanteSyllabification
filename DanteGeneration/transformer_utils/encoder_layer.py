@@ -1,6 +1,6 @@
 import tensorflow as tf
-from src.transformer_utils.multi_head_attention import MultiHeadAttention
-from src.transformer_utils.utils import *
+from DanteGeneration.transformer_utils.multi_head_attention import MultiHeadAttention
+from DanteGeneration.transformer_utils.utils import *
 
 
 class EncoderLayer(tf.keras.layers.Layer):

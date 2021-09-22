@@ -1,7 +1,7 @@
 import tensorflow as tf
-from src.transformer_utils.encoder import Encoder
-from src.transformer_utils.decoder import Decoder
-from src.transformer_utils.masking import *
+from DanteGeneration.transformer_utils.encoder import Encoder
+from DanteGeneration.transformer_utils.decoder import Decoder
+from DanteGeneration.transformer_utils.masking import *
 
 
 class Transformer(tf.keras.Model):

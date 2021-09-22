@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
-from src.transformer_utils.encoder_layer import EncoderLayer
-from src.transformer_utils.utils import *
+from DanteGeneration.transformer_utils.encoder_layer import EncoderLayer
+from DanteGeneration.transformer_utils.utils import *
 
 
 class Encoder(tf.keras.layers.Layer):

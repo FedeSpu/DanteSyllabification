@@ -1,4 +1,4 @@
-from src.transformer_utils.scaled_dot_product_att import *
+from DanteGeneration.transformer_utils.scaled_dot_product_att import *
 
 """
 Multi-head attention consists of:

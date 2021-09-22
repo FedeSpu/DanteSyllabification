@@ -1,6 +1,9 @@
-from preprocessing import *
-from utility import *
-from tokenizer import *
+from DanteGeneration.model import *
+from DanteGeneration.tokenizer import *
+from DanteGeneration.preprocessing import *
+from DanteGeneration.utility import *
+
+
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
 
@@ -45,3 +48,10 @@ transformer_config = {'num_layers': 6, #4
                       'num_heads': 8,
                       'dff': 2048, #512
                       'dropout_rate': 0.1}
+
+vocab_size = tokenizer.get_vocab_size().numpy() + 1
+model = ModelTransformer(transformer_config, vocab_size, vocab_size)
+train_batches = make_batches(train)   #dataset = make_batches(train) (Codice Fede)
+val_batches = make_batches(val)       #dataset = make_batches(val)   (Codice Fede)
+model.train(train_batches,val_batches, 5)  # TODO: remember to change to 20
+model.generate(tokenizer)

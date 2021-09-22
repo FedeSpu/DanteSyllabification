@@ -1,6 +1,6 @@
 import tensorflow as tf
-from src.transformer_utils.utils import *
-from src.transformer_utils.decoder_layer import DecoderLayer
+from DanteGeneration.transformer_utils.utils import *
+from DanteGeneration.transformer_utils.decoder_layer import DecoderLayer
 
 
 class Decoder(tf.keras.layers.Layer):

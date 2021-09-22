@@ -1,6 +1,6 @@
-from src.transformer_utils.custom_schedule import *
-from src.transformer import *
-from src.transformer_utils.checkpoint import *
+from DanteGeneration.transformer_utils.custom_schedule import *
+from DanteGeneration.transformer import *
+from DanteGeneration.transformer_utils.checkpoint import *
 import time
 
 
@@ -16,7 +16,7 @@ class ModelTransformer(object):
     def __init__(self, config, input_vocab_size, target_vocab_size):
 
         self.learning_rate = CustomSchedule(config['d_model'])
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
+        self.optimizer = tf.keras.optimizers.Adam(self.learning_rate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
         # LOSS AND METRICS
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
@@ -127,7 +127,7 @@ class ModelTransformer(object):
         return text
 
 
-    def generationText(self,tokenizer):
+    def generate(self,tokenizer):
         assert isinstance(sentence, tf.Tensor)
         if len(sentence.shape) == 0:
             sentence = sentence[tf.newaxis]
