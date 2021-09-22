@@ -10,6 +10,7 @@ random_state = 1
 
 
 def generate_dataset(file_training, file_result):
+    #OK
     with open('../outputs/' + file_training + '.txt', 'r+', encoding='utf-8') as file:
         X = file.readlines()
     with open('../outputs/' + file_result + '.txt', 'r+', encoding='utf-8') as file:
@@ -21,7 +22,6 @@ def generate_dataset(file_training, file_result):
     train = tf.data.Dataset.from_tensor_slices((Xtrain, ytrain))
     test = tf.data.Dataset.from_tensor_slices((Xtest, ytest))
     val = tf.data.Dataset.from_tensor_slices((Xval, yval))
-
     return train, val, test
 
 '''
@@ -46,8 +46,6 @@ def make_batches(ds, BUFFER_SIZE, BATCH_SIZE):
             .map(tokenize_pairs, num_parallel_calls=tf.data.AUTOTUNE)
             .prefetch(tf.data.AUTOTUNE))
 '''
-
-
 
 
 

@@ -1,4 +1,4 @@
-from src.transformer_utils.loss import *
+import tensorflow as tf
 
 
 def create_checkpoint(transformer, optimizer):

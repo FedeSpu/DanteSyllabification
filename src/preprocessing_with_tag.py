@@ -62,11 +62,11 @@ def generate_result(data):
     # add SOV as start of verse
     result_text = re.sub(r'\nY', '\nT Y', result_text)
     # add EOV as end of verse
-    result_text = re.sub(r'\n', ' S E\n', result_text)
+    result_text = re.sub(r'\n', ' E\n', result_text)
     # add SOV as start of the first verse
     result_text = re.sub(r'^ Y', '\nT Y', result_text)
     # add EOV as end of last verse
-    result_text = re.sub(r'$', ' S E\n', result_text)
+    result_text = re.sub(r'$', ' E\n', result_text)
     # delete first empty line
     result_text = re.sub(r'^\n', '', result_text)
     return result_text
