@@ -5,9 +5,6 @@ import os
 import tensorflow as tf
 from tensorflow_text.tools.wordpiece_vocab import bert_vocab_from_dataset as bert_vocab
 
-# file_to_read = "divina_syll_good"
-# file_training = "dante_training"
-# file_result = "dante_result_training"
 file_vocabulary = "dante_vocabulary"
 punctuation = r'[?!;:.,«»"“‟”()\-—\[\]]'
 

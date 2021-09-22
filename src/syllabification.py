@@ -3,7 +3,8 @@ from src.utils.utils import *
 from src.tokenizer import *
 from src.preprocessing_with_tag import *
 
-#OK
+
+# OK
 def tokenize_pairs(X, y):
     X = tokenizer.tokenize(X)
     # Convert from ragged to dense, padding with zeros.
@@ -15,7 +16,8 @@ def tokenize_pairs(X, y):
 
     return X, y
 
-#OK
+
+# OK
 def make_batches(ds):
     return (
         ds
@@ -26,19 +28,13 @@ def make_batches(ds):
             .prefetch(tf.data.AUTOTUNE))
 
 
-'''
-file_name_raw = 'inferno'
-file_name_syll = 'inferno_syll'
-random_state = 15
-'''
-
-#OK
+# OK
 file_training = 'dante_training'
 file_result = 'dante_result_training'
 file_to_read = 'divina_syll_good'
 file_vocabulary = 'dante_vocabulary'
 
-#OK
+# OK
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
 
@@ -54,7 +50,7 @@ def make_dataset(*sequences, batch_size=64):
 
 # 1) Pre-processing data
 # Pre-processing
-generate_data(file_training, file_result, file_to_read)
+# generate_data(file_training, file_result, file_to_read)
 # Generate train, validation and test data
 train, val, test = generate_dataset(file_training, file_result)
 # Tokenization
@@ -63,8 +59,8 @@ tokenizer = Tokenizer(['S', 'Y', 'T', 'E', '[START]', '[END]'],
 
 # 2.1) Set hyperparameters
 transformer_config = {'num_layers': 4,
-                      'd_model': 128,  # 256
-                      'num_heads': 8,  # 4
+                      'd_model': 256,  # 128
+                      'num_heads': 4,  # 8
                       'dff': 512,  # 1024
                       'dropout_rate': 0.1}
 
@@ -77,14 +73,14 @@ y_train = tf.dtypes.cast(y_train, dtype=tf.int64)
 dataset = make_dataset(X_train, y_train)
 '''
 model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
-train_batches = make_batches(train)   #dataset = make_batches(train) (Codice Fede)
-val_batches = make_batches(val)     #dataset = make_batches(val)   (Codice Fede)
-model.train(train_batches,val_batches, 20)  # TODO: remember to change to 20
+train_batches = make_batches(train)  # dataset = make_batches(train) (Codice Fede)
+val_batches = make_batches(val)  # dataset = make_batches(val)   (Codice Fede)
+model.train(train_batches, val_batches, 1)  # TODO: remember to change to 20
 
-line = 'nel mezzo del cammin di nostra vita'
-#OK
+line = "nel S mezzo S del S cammin S di S nostra S vita"
+# OK
 line = tf.convert_to_tensor([line])
-#OK
+# OK
 line = tokenizer.tokenize(line).to_tensor()
 encoder_input = line
 '''
@@ -95,16 +91,20 @@ for (batch, (inp, tar)) in enumerate(test_line):
 '''
 # inp, _ = test_line[0]
 # encoder_input = inp
-
-start,end = tokenizer.tokenize([''])[0]
+'''
+start, end = tokenizer.tokenize([''])[0]
+output = tf.convert_to_tensor([start])
+'''
+# start = tf.convert_to_tensor(2, dtype=tf.int64)
+# end = tf.convert_to_tensor(3, dtype=tf.int64)
+start, end = tokenizer.tokenize([''])[0]
 output = tf.convert_to_tensor([start])
 output = tf.expand_dims(output, 0)
 tra = model.get_transformer()
 
-
-for i in range(100):
+for i in range(20):
     enc_padding_mask, combined_mask, dec_padding_mask = tra.create_masks(encoder_input, output)
-    predictions, attention_weights = tra.call((encoder_input, output),False)
+    predictions, attention_weights = tra.call((encoder_input, output), False)
 
     predictions = predictions[:, -1:, :]
 
@@ -116,7 +116,6 @@ for i in range(100):
         break
 
 text = tokenizer.detokenize(output)[0]  # shape: ()
-
 
 '''
     enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)

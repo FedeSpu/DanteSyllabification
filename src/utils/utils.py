@@ -6,7 +6,7 @@ import tensorflow as tf
 
 train_size = 0.67
 train_size_val = 0.8
-random_state = 1
+random_state = 42
 
 
 def generate_dataset(file_training, file_result):
@@ -23,6 +23,7 @@ def generate_dataset(file_training, file_result):
     val = tf.data.Dataset.from_tensor_slices((Xval, yval))
 
     return train, val, test
+
 
 '''
 def tokenize_pairs(X, y):
@@ -46,8 +47,3 @@ def make_batches(ds, BUFFER_SIZE, BATCH_SIZE):
             .map(tokenize_pairs, num_parallel_calls=tf.data.AUTOTUNE)
             .prefetch(tf.data.AUTOTUNE))
 '''
-
-
-
-
-
