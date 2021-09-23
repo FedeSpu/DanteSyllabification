@@ -2,10 +2,10 @@ import tensorflow as tf
 from src.transformer_utils.encoder import Encoder
 from src.transformer_utils.decoder import Decoder
 from src.transformer_utils.masking import *
-from src.transformer_utils.loss import *
+from abc import ABC
 
 
-class Transformer(tf.keras.Model):
+class Transformer(tf.keras.Model, ABC):
     def __init__(self, num_layers, d_model, num_heads, dff, input_vocab_size,
                  target_vocab_size, pe_input, pe_target, rate=0.1):
         super().__init__()
@@ -21,18 +21,19 @@ class Transformer(tf.keras.Model):
         # Keras models prefer if you pass all your inputs in the first argument
         inp, tar = inputs
 
-        enc_padding_mask, look_ahead_mask, dec_padding_mask = self.create_masks(inp, tar)
+        enc_padding_mask, look_ahead_mask, dec_padding_mask = create_masks(inp, tar)
 
         enc_output = self.encoder(inp, training, enc_padding_mask)  # (batch_size, inp_seq_len, d_model)
 
         # dec_output.shape == (batch_size, tar_seq_len, d_model)
-        dec_output, attention_weights = self.decoder(tar, enc_output, training, look_ahead_mask, dec_padding_mask)
+        dec_output, attention_weights = self.decoder(
+            tar, enc_output, training, look_ahead_mask, dec_padding_mask)
 
         final_output = self.final_layer(dec_output)  # (batch_size, tar_seq_len, target_vocab_size)
 
         return final_output, attention_weights
 
-    def create_masks(self, inp, tar):
+    def create_masks(self,inp, tar):
         # Encoder padding mask
         enc_padding_mask = create_padding_mask(inp)
 
