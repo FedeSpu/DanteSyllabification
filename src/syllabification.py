@@ -75,9 +75,12 @@ dataset = make_dataset(X_train, y_train)
 model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
 train_batches = make_batches(train)  # dataset = make_batches(train) (Codice Fede)
 val_batches = make_batches(val)  # dataset = make_batches(val)   (Codice Fede)
-model.train(train_batches, val_batches, 1)  # TODO: remember to change to 20
+model.train(train_batches, val_batches, 0)  # TODO: remember to change to 20
 
-line = "nel S mezzo S del S cammin S di S nostra S vita"
+# losses = get_loss_funcs()
+# plot_accuracy(losses[0], losses[1], losses[2], losses[3])
+
+line = "cantami o diva del pelide achille"
 # OK
 line = tf.convert_to_tensor([line])
 # OK
@@ -102,7 +105,7 @@ output = tf.convert_to_tensor([start])
 output = tf.expand_dims(output, 0)
 tra = model.get_transformer()
 
-for i in range(20):
+for i in range(100):
     enc_padding_mask, combined_mask, dec_padding_mask = tra.create_masks(encoder_input, output)
     predictions, attention_weights = tra.call((encoder_input, output), False)
 

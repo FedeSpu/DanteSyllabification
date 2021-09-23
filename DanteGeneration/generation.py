@@ -1,8 +1,10 @@
 from preprocessing import *
 from utility import *
 from tokenizer import *
+
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
+
 
 def tokenize_pairs(X, y):
     X = tokenizer.tokenize(X)
@@ -14,6 +16,7 @@ def tokenize_pairs(X, y):
     y = y.to_tensor()
 
     return X, y
+
 
 def make_batches(ds):
     return (ds
@@ -30,18 +33,17 @@ file_training = "dante_training_gen"
 file_result = "dante_result_training_gen"
 file_vocabulary = "dante_vocabulary_gen"
 
-
-generate_data(file_training,file_result,file_to_read)
+generate_data(file_training, file_result, file_to_read)
 train, val, test = load_gen_dataset()
 
-tokenizer = Tokenizer(['S', 'Y', 'T', 'E', 'B' , '[START]', '[END]'],
+tokenizer = Tokenizer(['S', 'Y', 'T', 'E', 'B', '[START]', '[END]'],
                       '../outputs_gen/' + file_vocabulary + '.txt')
 
 train_batches = make_batches(train)
 val_batches = make_batches(val)
 
-transformer_config = {'num_layers': 6, #4
-                      'd_model': 512, #128
+transformer_config = {'num_layers': 6,  # 4
+                      'd_model': 512,  # 128
                       'num_heads': 8,
-                      'dff': 2048, #512
+                      'dff': 2048,  # 512
                       'dropout_rate': 0.1}

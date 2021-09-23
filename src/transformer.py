@@ -21,7 +21,7 @@ class Transformer(tf.keras.Model):
         # Keras models prefer if you pass all your inputs in the first argument
         inp, tar = inputs
 
-        enc_padding_mask, look_ahead_mask, dec_padding_mask = self.create_masks(self,inp, tar)
+        enc_padding_mask, look_ahead_mask, dec_padding_mask = self.create_masks(inp, tar)
 
         enc_output = self.encoder(inp, training, enc_padding_mask)  # (batch_size, inp_seq_len, d_model)
 

@@ -3,13 +3,22 @@ from src.transformer import *
 from src.transformer_utils.checkpoint import *
 import time
 
+train_losses = []
+train_accuracies = []
+val_losses = []
+val_accuracies = []
+
+
+def get_loss_funcs():
+    return [train_losses, train_accuracies, val_losses, val_accuracies]
+
 
 class ModelTransformer(object):
     def __init__(self, config, tokenizer, input_vocab_size, target_vocab_size):
         super(ModelTransformer, self).__init__()
         self.tokenizer = tokenizer
         # OPTIMIZER
-        #OK
+        # OK
         self.learning_rate = CustomSchedule(config['d_model'])
         self.optimizer = tf.keras.optimizers.Adam(self.learning_rate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
@@ -83,7 +92,7 @@ class ModelTransformer(object):
             self.val_accuracy.reset_states()
 
             # inp -> X, tar -> Y
-            #FIXMEforse da cambiare
+            # FIXMEforse da cambiare
             for (batch, (inp, tar)) in enumerate(train):
                 self.train_step(inp=inp, tar=tar)
 
@@ -114,6 +123,11 @@ class ModelTransformer(object):
             print(
                 f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
             print(f'Time taken for 1 epoch: {time.time() - start:.2f} secs\n')
+
+            train_losses.append(self.train_loss.result().numpy())
+            train_accuracies.append(self.train_accuracy.result().numpy())
+            val_losses.append(self.val_loss.result().numpy())
+            val_accuracies.append(self.val_accuracy.result().numpy())
 
     def get_transformer(self):
         return self.transformer

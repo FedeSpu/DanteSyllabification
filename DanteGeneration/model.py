@@ -3,7 +3,6 @@ from src.transformer import *
 from src.transformer_utils.checkpoint import *
 import time
 
-
 EPOCHS = 50
 
 train_step_signature = [
@@ -53,15 +52,14 @@ class ModelTransformer(object):
         self.train_loss(loss)
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
-
-    def train(self, train,val, EPOCHS):
+    def train(self, train, val, EPOCHS):
         for epoch in range(EPOCHS):
             start = time.time()
 
             self.train_loss.reset_states()
             self.train_accuracy.reset_states()
 
-            #added these two
+            # added these two
             self.val_loss.reset_states()
             self.val_accuracy.reset_states()
 
@@ -78,30 +76,30 @@ class ModelTransformer(object):
                 ckpt_save_path = self.cpkt_manager.save()
                 print(f'Saving checkpoint for epoch {epoch + 1} at {ckpt_save_path}')
 
-        #added the part for the validation dataset
-            #TODO:cambiarla leggermente
-            #-----
+            # added the part for the validation dataset
+            # TODO:cambiarla leggermente
+            # -----
             for val_entry in val:
                 val_inp = val_entry[0]
                 val_tar = val_entry[1]
                 val_tar_inp = val_tar[:, :-1]
                 val_tar_real = val_tar[:, 1:]
                 with tf.GradientTape() as tape:
-                    predictions, _ = self.transformer([val_inp, val_tar_inp],training=False)
+                    predictions, _ = self.transformer([val_inp, val_tar_inp], training=False)
                 loss = loss_function(val_tar_real, predictions)
                 self.val_loss(loss)
                 self.val_accuracy(accuracy_function(val_tar_real, predictions))
-            #-----
+            # -----
 
             print(f'Epoch {epoch + 1} Loss {self.train_loss.result():.4f} Accuracy {self.train_accuracy.result():.4f}')
-            print(f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
+            print(
+                f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
             print(f'Time taken for 1 epoch: {time.time() - start:.2f} secs\n')
-
 
     def get_transformer(self):
         return self.transformer
 
-    def syllabify(self,sentence,tokenizer):
+    def syllabify(self, sentence, tokenizer):
         assert isinstance(sentence, tf.Tensor)
         if len(sentence.shape) == 0:
             sentence = sentence[tf.newaxis]
@@ -126,8 +124,7 @@ class ModelTransformer(object):
         text = tokenizer.detokenize(output)[0]
         return text
 
-
-    def generationText(self,tokenizer):
+    def generationText(self, tokenizer):
         assert isinstance(sentence, tf.Tensor)
         if len(sentence.shape) == 0:
             sentence = sentence[tf.newaxis]
@@ -141,7 +138,7 @@ class ModelTransformer(object):
         output = tf.transpose(output_array.stack())
         predicted_id = tf.argmax(predictions, axis=-1)
         output_array = output_array.write(0, predicted_id[0])
-        for i in tf.range(1,50):
+        for i in tf.range(1, 50):
             predictions, _ = self.transformer([encoder_input, output], training=False)
             predictions = predictions[:, -1:, :]  # (batch_size, 1, vocab_size)
             predictions = tf.nn.softmax(predictions, axis=-1)
