@@ -3,6 +3,7 @@ from src.transformer import *
 from src.transformer_utils.checkpoint import *
 import time
 import random
+import re
 
 EPOCHS = 50
 
@@ -10,15 +11,6 @@ train_step_signature = [
     tf.TensorSpec(shape=(None, None), dtype=tf.int64),
     tf.TensorSpec(shape=(None, None), dtype=tf.int64),
 ]
-
-train_losses = []
-train_accuracies = []
-val_losses = []
-val_accuracies = []
-
-
-def get_loss_funcs():
-    return [train_losses, train_accuracies, val_losses, val_accuracies]
 
 
 class ModelTransformer(object):
@@ -29,6 +21,7 @@ class ModelTransformer(object):
         # LOSS AND METRICS
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
+
         self.val_loss = tf.keras.metrics.Mean(name='val_loss')
         self.val_accuracy = tf.keras.metrics.Mean(name='val_accuracy')
 
@@ -60,14 +53,15 @@ class ModelTransformer(object):
         self.train_loss(loss)
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
-    def train(self, train, val, EPOCHS):
+
+    def train(self, train,val, EPOCHS):
         for epoch in range(EPOCHS):
             start = time.time()
 
             self.train_loss.reset_states()
             self.train_accuracy.reset_states()
 
-            # added these two
+            #added these two
             self.val_loss.reset_states()
             self.val_accuracy.reset_states()
 
@@ -93,21 +87,15 @@ class ModelTransformer(object):
                 val_tar_inp = val_tar[:, :-1]
                 val_tar_real = val_tar[:, 1:]
                 with tf.GradientTape() as tape:
-                    predictions, _ = self.transformer([val_inp, val_tar_inp], training=False)
+                    predictions, _ = self.transformer([val_inp, val_tar_inp],training=False)
                 loss = loss_function(val_tar_real, predictions)
                 self.val_loss(loss)
                 self.val_accuracy(accuracy_function(val_tar_real, predictions))
-            # -----
+            #-----
 
             print(f'Epoch {epoch + 1} Loss {self.train_loss.result():.4f} Accuracy {self.train_accuracy.result():.4f}')
-            print(
-                f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
+            print(f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
             print(f'Time taken for 1 epoch: {time.time() - start:.2f} secs\n')
-
-            train_losses.append(self.train_loss.result().numpy())
-            train_accuracies.append(self.train_accuracy.result().numpy())
-            val_losses.append(self.val_loss.result().numpy())
-            val_accuracies.append(self.val_accuracy.result().numpy())
 
     def get_transformer(self):
         return self.transformer
@@ -136,6 +124,9 @@ class ModelTransformer(object):
         output = tf.transpose(output_array.stack())
         # output.shape (1, tokens)
         text = tokenizer.detokenize(output)[0]
+        text = text.numpy().decode('utf-8')
+        text = re.sub(rf'\[', '', text)
+        text = re.sub(rf'\]', '', text)
         return text
 
     def generate(self, sentence, tokenizer):
@@ -151,16 +142,18 @@ class ModelTransformer(object):
         output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True)
         output_array = output_array.write(0, start)
         output = tf.transpose(output_array.stack())
-
+        #first prediction
         predictions, _ = self.transformer([encoder_input, output], training=False)
         predictions = predictions[:, -1:, :]
         predicted_id = tf.argmax(predictions, axis=-1)
         output_array = output_array.write(1, predicted_id[0])
         for i in tf.range(1, 50):
+            #other predictions
+            output = tf.transpose(output_array.stack())
             predictions, _ = self.transformer([encoder_input, output], training=False)
             predictions = predictions[:, -1:, :]  # (batch_size, 1, vocab_size)
             predictions = tf.nn.softmax(predictions, axis=-1)
-            top = tf.math.top_k(predictions.numpy()[0][0])
+            top = tf.math.top_k(predictions.numpy()[0][0],k=1) #greed search
             predicted_id = random.choices(top.indices.numpy(), weights=top.values.numpy(), k=1)
             predicted_id = tf.convert_to_tensor([predicted_id], dtype=tf.int64)
             output_array = output_array.write(i + 1, predicted_id[0])
@@ -169,4 +162,7 @@ class ModelTransformer(object):
         output = tf.transpose(output_array.stack())
         # output.shape (1, tokens)
         text = tokenizer.detokenize(output)[0]
+        text = text.numpy().decode('utf-8')
+        text = re.sub(rf'\[', '', text)
+        text = re.sub(rf'\]', '', text)
         return text

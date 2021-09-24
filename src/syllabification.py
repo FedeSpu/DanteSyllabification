@@ -16,8 +16,7 @@ def tokenize_pairs(X, y):
 
     return X, y
 
-
-# OK
+#OK
 def make_batches(ds):
     return (
         ds
@@ -28,13 +27,19 @@ def make_batches(ds):
             .prefetch(tf.data.AUTOTUNE))
 
 
-# OK
+'''
+file_name_raw = 'inferno'
+file_name_syll = 'inferno_syll'
+random_state = 15
+'''
+
+#OK
 file_training = 'dante_training'
 file_result = 'dante_result_training'
 file_to_read = 'divina_syll_good'
 file_vocabulary = 'dante_vocabulary'
 
-# OK
+#OK
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
 
@@ -59,8 +64,8 @@ tokenizer = Tokenizer(['S', 'Y', 'T', 'E', '[START]', '[END]'],
 
 # 2.1) Set hyperparameters
 transformer_config = {'num_layers': 4,
-                      'd_model': 256,  # 128
-                      'num_heads': 4,  # 8
+                      'd_model': 128,  # 256
+                      'num_heads': 8,  # 4
                       'dff': 512,  # 1024
                       'dropout_rate': 0.1}
 
@@ -117,9 +122,10 @@ output = tf.convert_to_tensor([start])
 output = tf.expand_dims(output, 0)
 tra = model.get_transformer()
 
+
 for i in range(100):
     enc_padding_mask, combined_mask, dec_padding_mask = tra.create_masks(encoder_input, output)
-    predictions, attention_weights = tra.call((encoder_input, output), False)
+    predictions, attention_weights = tra.call((encoder_input, output),False)
 
     predictions = predictions[:, -1:, :]
 
