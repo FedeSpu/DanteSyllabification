@@ -15,13 +15,12 @@ random_state = 42
 
 
 def generate_dataset(file_training, file_result):
-    #OK
     with open('../outputs/' + file_training + '.txt', 'r+', encoding='utf-8') as file:
         X = file.readlines()
     with open('../outputs/' + file_result + '.txt', 'r+', encoding='utf-8') as file:
         y = file.readlines()
+
     Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, random_state=random_state, train_size=train_size)
-    # TODO: check validation
     Xtrain, Xval, ytrain, yval = train_test_split(Xtrain, ytrain, random_state=random_state, train_size=train_size_val)
 
     train = tf.data.Dataset.from_tensor_slices((Xtrain, ytrain))
@@ -48,7 +47,6 @@ def load_gen_dataset():
     y = re.sub(r'\n', ' ', y)
     X = X.split('T')
     y = y.split('T')
-    # TODO: controllare meglio i settaggi
     Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, random_state=random_state, train_size=0.75)
     Xtrain, Xval, ytrain, yval = train_test_split(Xtrain, ytrain, random_state=random_state, train_size=0.80)
     train = tf.data.Dataset.from_tensor_slices((Xtrain, ytrain))

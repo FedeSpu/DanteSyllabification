@@ -4,7 +4,6 @@ from src.tokenizer import *
 from src.preprocessing_syl import *
 
 
-# OK
 def tokenize_pairs(X, y):
     X = tokenizer.tokenize(X)
     # Convert from ragged to dense, padding with zeros.
@@ -16,7 +15,7 @@ def tokenize_pairs(X, y):
 
     return X, y
 
-#OK
+
 def make_batches(ds):
     return (
         ds
@@ -27,19 +26,12 @@ def make_batches(ds):
             .prefetch(tf.data.AUTOTUNE))
 
 
-'''
-file_name_raw = 'inferno'
-file_name_syll = 'inferno_syll'
-random_state = 15
-'''
-
-#OK
 file_training = 'dante_training'
 file_result = 'dante_result_training'
 file_to_read = 'divina_syll_good'
 file_vocabulary = 'dante_vocabulary'
 
-#OK
+
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
 
@@ -70,82 +62,13 @@ transformer_config = {'num_layers': 4,
                       'dropout_rate': 0.1}
 
 # vocab_size = len(tokenizer.word_index) + 1
-vocab_size = tokenizer.get_vocab_size().numpy() + 1
-'''
-model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
-X_train = tf.dtypes.cast(X_train, dtype=tf.int64)
-y_train = tf.dtypes.cast(y_train, dtype=tf.int64)
-dataset = make_dataset(X_train, y_train)
-'''
+vocab_size = tokenizer.get_vocab_size().numpy()+1
+
 model = ModelTransformer(transformer_config, vocab_size, vocab_size)
 train_batches = make_batches(train)
 val_batches = make_batches(val)
-model.train(train_batches, val_batches, 0)  # TODO: remember to change to 20
+model.train(train_batches,val_batches, 2) #
 
-file_name = 'silvia'
-f = open('./poems/' + file_name + '.txt', 'r', encoding='utf-8')
-f2 = open('./poems/' + file_name + '_syll.txt', 'w+', encoding='utf-8')
-lines = f.readlines()
-lines = preprocess_text(lines)
-for line in lines:
-    line = line.rstrip()
-    text_res = model.syllabify(tf.constant(line), tokenizer)
-    res = text_res.numpy().decode('utf-8')
-    res = res[2:][:-2]
-    f2.write(res + '\n')
-    print(res)
-
-f.close()
-f2.close()
-
-# line = 'nel mezzo del cammin di nostra vita'
-# line = 'cantami o diva del pelide achille'
-# OK
-# line = tf.convert_to_tensor([line])
-# OK
-# line = tokenizer.tokenize(line).to_tensor()
-# encoder_input = line
-# text_res = model.syllabify(tf.constant(line), tokenizer)
-# print(text_res.numpy().decode('utf-8'))
-
-'''
-test_line = make_batches(test)  # line
-for (batch, (inp, tar)) in enumerate(test_line):
-    encoder_input = inp
-    break
-'''
-# inp, _ = test_line[0]
-# encoder_input = inp
-'''
-start,end = tokenizer.tokenize([''])[0]
-output = tf.convert_to_tensor([start])
-output = tf.expand_dims(output, 0)
-tra = model.get_transformer()
-
-
-for i in range(100):
-    enc_padding_mask, combined_mask, dec_padding_mask = tra.create_masks(encoder_input, output)
-    predictions, attention_weights = tra.call((encoder_input, output),False)
-
-    predictions = predictions[:, -1:, :]
-
-    predicted_id = tf.argmax(predictions, axis=-1)
-    output = tf.concat([output, predicted_id], axis=-1)
-
-    # print(stop_ten)
-    if predicted_id == end:
-        break
-
-text = tokenizer.detokenize(output)[0]  # shape: ()
-predicted = text.numpy().decode('utf-8')
-print(predicted)
-'''
-
-'''
-    enc_padding_mask, combined_mask, dec_padding_mask = create_masks(encoder_input, output)
-    dec_outuput, _ = model.get_transformer().decoder(output, enc_output, False, combined_mask, dec_padding_mask)
-    predictions = model.get_transformer().final_layer(dec_outuput)
-    predicted_ids = choose_greedy(predictions)
-
-    output = tf.concat([tf.cast(output, dtype=tf.int64), tf.cast(predicted_ids, dtype=tf.int64), ], axis=1)
-'''
+line = 'nel mezzo del cammin di nostra vita'
+text=model.syllabify(tf.constant(line),tokenizer)
+print(text)
