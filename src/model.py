@@ -13,15 +13,6 @@ train_step_signature = [
     tf.TensorSpec(shape=(None, None), dtype=tf.int64),
 ]
 
-train_losses = []
-train_accuracies = []
-val_losses = []
-val_accuracies = []
-
-
-def get_loss_funcs():
-    return [train_losses, train_accuracies, val_losses, val_accuracies]
-
 
 class ModelTransformer(object):
     def __init__(self, config, input_vocab_size, target_vocab_size):
@@ -31,6 +22,7 @@ class ModelTransformer(object):
         # LOSS AND METRICS
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
+
         self.val_loss = tf.keras.metrics.Mean(name='val_loss')
         self.val_accuracy = tf.keras.metrics.Mean(name='val_accuracy')
 
@@ -62,14 +54,15 @@ class ModelTransformer(object):
         self.train_loss(loss)
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
-    def train(self, train, val, EPOCHS):
+
+    def train(self, train,val, EPOCHS):
         for epoch in range(EPOCHS):
             start = time.time()
 
             self.train_loss.reset_states()
             self.train_accuracy.reset_states()
 
-            # added these two
+            #added these two
             self.val_loss.reset_states()
             self.val_accuracy.reset_states()
 
@@ -95,21 +88,15 @@ class ModelTransformer(object):
                 val_tar_inp = val_tar[:, :-1]
                 val_tar_real = val_tar[:, 1:]
                 with tf.GradientTape() as tape:
-                    predictions, _ = self.transformer([val_inp, val_tar_inp], training=False)
+                    predictions, _ = self.transformer([val_inp, val_tar_inp],training=False)
                 loss = loss_function(val_tar_real, predictions)
                 self.val_loss(loss)
                 self.val_accuracy(accuracy_function(val_tar_real, predictions))
-            # -----
+            #-----
 
             print(f'Epoch {epoch + 1} Loss {self.train_loss.result():.4f} Accuracy {self.train_accuracy.result():.4f}')
-            print(
-                f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
+            print(f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
             print(f'Time taken for 1 epoch: {time.time() - start:.2f} secs\n')
-
-            train_losses.append(self.train_loss.result().numpy())
-            train_accuracies.append(self.train_accuracy.result().numpy())
-            val_losses.append(self.val_loss.result().numpy())
-            val_accuracies.append(self.val_accuracy.result().numpy())
 
     def get_transformer(self):
         return self.transformer
