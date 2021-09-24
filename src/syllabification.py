@@ -31,7 +31,6 @@ file_result = 'dante_result_training'
 file_to_read = 'divina_syll_good'
 file_vocabulary = 'dante_vocabulary'
 
-
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
 
@@ -62,13 +61,13 @@ transformer_config = {'num_layers': 4,
                       'dropout_rate': 0.1}
 
 # vocab_size = len(tokenizer.word_index) + 1
-vocab_size = tokenizer.get_vocab_size().numpy()+1
+vocab_size = tokenizer.get_vocab_size().numpy() + 1
 
 model = ModelTransformer(transformer_config, vocab_size, vocab_size)
 train_batches = make_batches(train)
 val_batches = make_batches(val)
-model.train(train_batches,val_batches, 2) #
+model.train(train_batches, val_batches, 0)  # change for training
 
 line = 'nel mezzo del cammin di nostra vita'
-text=model.syllabify(tf.constant(line),tokenizer)
+text = model.syllabify(tf.constant(line), tokenizer)
 print(text)

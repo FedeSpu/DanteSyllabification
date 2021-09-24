@@ -1,11 +1,6 @@
 from src.model import *
 from src.tokenizer_gen import *
-from src.preprocessing_gen import *
 from src.utils.utils import *
-
-# tf.test.gpu_device_name()
-# print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-# tf.debugging.set_log_device_placement(True)
 
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
@@ -42,7 +37,7 @@ file_vocabulary = "dante_vocabulary_gen"
 train, val, test = load_gen_dataset()
 
 tokenizer = TokenizerGen(['S', 'I', 'T', 'E', 'B', '[START]', '[END]'],
-                      '../outputs_gen/' + file_vocabulary + '.txt')
+                         '../outputs_gen/' + file_vocabulary + '.txt')
 
 transformer_config = {'num_layers': 6,
                       'd_model': 512,
@@ -54,7 +49,7 @@ vocab_size = tokenizer.get_vocab_size().numpy() + 1
 model = ModelTransformer(transformer_config, vocab_size, vocab_size)
 train_batches = make_batches(train)
 val_batches = make_batches(val)
-model.train(train_batches,val_batches, 0)  #change epoque
+model.train(train_batches, val_batches, 0)  # change epoque
 
 sentence = 'ove udirai le disperate strida vedrai li antichi spiriti dolenti ch’ a la seconda morte ciascun grida'
-print(model.generate(tf.constant(sentence),tokenizer))
+print(model.generate(tf.constant(sentence), tokenizer))

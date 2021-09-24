@@ -4,12 +4,12 @@ import os
 import tensorflow as tf
 from tensorflow_text.tools.wordpiece_vocab import bert_vocab_from_dataset as bert_vocab
 
-#TAG USATI
-#B => beginning of the line
-#I => syllable
-#E => end of the line
-#T => Triplet
-#S => Space
+# TAG USED
+# B => beginning of the line
+# I => syllable
+# E => end of the line
+# T => Triplet
+# S => Space
 
 file_vocabulary = "dante_vocabulary_gen"
 punctuation = r'[?!;:.,«»"“‟”()\-—\[\]]'
@@ -52,8 +52,9 @@ def read_data(file_to_read):
     raw_text = re.sub(r'^\n\n', '', raw_text)
     return raw_text
 
+
 def generate_training_data(data):
-    #add tag T indicating triplet
+    # add tag T indicating triplet
     data = re.sub(r'.\n\n\|', 'T\n\n|', data)
     # delete empty lines, except the first one and the last one
     data = re.sub(r'\n+', '\n', data)
@@ -68,7 +69,7 @@ def generate_training_data(data):
     # delete | indicating syllabification
     training_data = re.sub(r'\|', '', data)
     # add tag sep to indicate separator
-    training_data = re.sub(r' *T', ' T',  training_data)
+    training_data = re.sub(r' *T', ' T', training_data)
     return data, training_data
 
 
@@ -93,7 +94,7 @@ def generate_result(data):
     result_text = re.sub(r'$', ' E', result_text)
     # delete first empty line
     result_text = re.sub(r'^\n', '', result_text)
-    #switch T E
+    # switch T E
     result_text = re.sub(r'T E', 'E T', result_text)
     return result_text
 
@@ -101,7 +102,7 @@ def generate_result(data):
 def generate_vocabulary(training_data):
     train_pt = tf.data.Dataset.from_tensor_slices(training_data.split('\n'))
     bert_tokenizer_params = dict(lower_case=True)
-    reserved_tokens = ['S','I','T','E','B','[START]','[END]']
+    reserved_tokens = ['S', 'I', 'T', 'E', 'B', '[START]', '[END]']
     bert_vocab_args = dict(
         # The target vocabulary size
         vocab_size=200,
@@ -120,6 +121,3 @@ def generate_vocabulary(training_data):
     with open('../outputs_gen/' + file_vocabulary + '.txt', 'w', encoding='utf-8') as f:
         for token in pt_vocab:
             print(token, file=f)
-
-
-

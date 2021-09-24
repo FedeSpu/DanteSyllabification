@@ -1,4 +1,4 @@
-#https://www.tensorflow.org/text/guide/subwords_tokenizer
+# https://www.tensorflow.org/text/guide/subwords_tokenizer
 
 import tensorflow as tf
 import tensorflow_text as text
@@ -17,7 +17,7 @@ def add_start_end(ragged, reserved_tokens):
 
 def cleanup_text(reserved_tokens, token_txt):
     # Drop the reserved tokens, except for
-    bad_tokens = [re.escape(tok) for tok in reserved_tokens if tok not in ['B','S', 'I', 'E', 'T']]
+    bad_tokens = [re.escape(tok) for tok in reserved_tokens if tok not in ['B', 'S', 'I', 'E', 'T']]
     bad_token_re = "$".join(bad_tokens)
 
     bad_cells = tf.strings.regex_full_match(token_txt, bad_token_re)

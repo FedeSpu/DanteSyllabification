@@ -1,4 +1,4 @@
-#https://www.tensorflow.org/text/guide/subwords_tokenizer
+# https://www.tensorflow.org/text/guide/subwords_tokenizer
 
 import tensorflow as tf
 import tensorflow_text as text

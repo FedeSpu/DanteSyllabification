@@ -5,23 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ad924af-c132-42c2-812d-fd51c3716226" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/dante_result_training.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/dante_result_training.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/dante_vocabulary.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/dante_vocabulary.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/old/inferno_syll_verses.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/old/inferno_verses.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs_gen/dante_result_training_gen.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs_gen/dante_result_training_gen.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs_gen/dante_vocabulary_gen.txt" beforeDir="false" afterPath="$PROJECT_DIR$/outputs_gen/dante_vocabulary_gen.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/generation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/my_generatior.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/my_metrics.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/my_preprocess.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/my_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/poems/passero.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/poems/passero.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/preprocessing_gen.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/preprocessing_gen.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/preprocessing_syl.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/preprocessing_syl.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/syllabification.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/syllabification.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tokenizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/tokenizer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tokenizer_gen.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/tokenizer_gen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/transformer_utils/custom_schedule.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/transformer_utils/custom_schedule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +35,18 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
   </component>
   <component name="RunManager" selected="Python.generation">
     <configuration name="generation" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -90,7 +98,10 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="0ad924af-c132-42c2-812d-fd51c3716226" name="Changes" comment="" />
@@ -106,26 +117,12 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/syllabification.py</url>
-          <line>7</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/syllabification.py</url>
-          <line>9</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

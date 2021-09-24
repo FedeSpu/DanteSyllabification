@@ -63,7 +63,6 @@ class ModelTransformer(object):
             self.val_loss.reset_states()
             self.val_accuracy.reset_states()
 
-
             for (batch, (inp, tar)) in enumerate(train):
                 self.train_step(inp=inp, tar=tar)
 
@@ -76,18 +75,16 @@ class ModelTransformer(object):
                 ckpt_save_path = self.cpkt_manager.save()
                 print(f'Saving checkpoint for epoch {epoch + 1} at {ckpt_save_path}')
 
-
             for value in val:
                 val_inp = value[0]
                 val_out = value[1]
                 val_out_inp = val_out[:, :-1]
                 val_out_real = val_out[:, 1:]
                 with tf.GradientTape() as tape:
-                    predictions, _ = self.transformer([val_inp, val_out_inp],training=False)
+                    predictions, _ = self.transformer([val_inp, val_out_inp], training=False)
                 loss = loss_function(val_out_real, predictions)
                 self.val_loss(loss)
                 self.val_accuracy(accuracy_function(val_out_real, predictions))
-
 
             print(f'Epoch {epoch + 1} Loss {self.train_loss.result():.4f} Accuracy {self.train_accuracy.result():.4f}')
             print(

@@ -4,7 +4,6 @@ from src.transformer_utils.decoder import Decoder
 from src.transformer_utils.masking import *
 
 
-
 class Transformer(tf.keras.Model):
     def __init__(self, num_layers, d_model, num_heads, dff, input_vocab_size,
                  target_vocab_size, pe_input, pe_target, rate=0.1):
@@ -33,7 +32,7 @@ class Transformer(tf.keras.Model):
 
         return final_output, attention_weights
 
-    def create_masks(self,inp, tar):
+    def create_masks(self, inp, tar):
         # Encoder padding mask
         enc_padding_mask = create_padding_mask(inp)
 

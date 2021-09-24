@@ -34,8 +34,6 @@ def generate_dataset(file_training, file_result):
     return train, val, test
 
 
-
-
 def load_gen_dataset():
     with open('../outputs_gen/dante_training_gen.txt', 'r+', encoding='utf-8') as file:
         X = file.readlines()
