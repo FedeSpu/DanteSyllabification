@@ -50,7 +50,7 @@ vocab_size = tokenizer.get_vocab_size().numpy() + 1
 model = ModelTransformer(transformer_config, vocab_size, vocab_size)
 train_batches = make_batches(train)
 val_batches = make_batches(val)
-model.train(train_batches,val_batches, 1)  #change epoque
+model.train(train_batches,val_batches, 0)  #change epoque
 
 sentence = 'ove udirai le disperate strida vedrai li antichi spiriti dolenti ch’ a la seconda morte ciascun grida'
 print(model.generate(tf.constant(sentence),tokenizer))

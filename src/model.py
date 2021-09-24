@@ -79,9 +79,9 @@ class ModelTransformer(object):
                 print(f'Saving checkpoint for epoch {epoch + 1} at {ckpt_save_path}')
 
 
-            for val_entry in val:
-                val_inp = val_entry[0]
-                val_out = val_entry[1] #val_out
+            for value in val:
+                val_inp = value[0]
+                val_out = value[1]
                 val_out_inp = val_out[:, :-1]
                 val_out_real = val_out[:, 1:]
                 with tf.GradientTape() as tape:
