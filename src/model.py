@@ -53,15 +53,14 @@ class ModelTransformer(object):
         self.train_loss(loss)
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
-
-    def train(self, train,val, EPOCHS):
+    def train(self, train, val, EPOCHS):
         for epoch in range(EPOCHS):
             start = time.time()
 
             self.train_loss.reset_states()
             self.train_accuracy.reset_states()
 
-            #added these two
+            # added these two
             self.val_loss.reset_states()
             self.val_accuracy.reset_states()
 
@@ -87,14 +86,15 @@ class ModelTransformer(object):
                 val_tar_inp = val_tar[:, :-1]
                 val_tar_real = val_tar[:, 1:]
                 with tf.GradientTape() as tape:
-                    predictions, _ = self.transformer([val_inp, val_tar_inp],training=False)
+                    predictions, _ = self.transformer([val_inp, val_tar_inp], training=False)
                 loss = loss_function(val_tar_real, predictions)
                 self.val_loss(loss)
                 self.val_accuracy(accuracy_function(val_tar_real, predictions))
-            #-----
+            # -----
 
             print(f'Epoch {epoch + 1} Loss {self.train_loss.result():.4f} Accuracy {self.train_accuracy.result():.4f}')
-            print(f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
+            print(
+                f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
             print(f'Time taken for 1 epoch: {time.time() - start:.2f} secs\n')
 
     def get_transformer(self):
@@ -142,18 +142,18 @@ class ModelTransformer(object):
         output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True)
         output_array = output_array.write(0, start)
         output = tf.transpose(output_array.stack())
-        #first prediction
+        # first prediction
         predictions, _ = self.transformer([encoder_input, output], training=False)
         predictions = predictions[:, -1:, :]
         predicted_id = tf.argmax(predictions, axis=-1)
         output_array = output_array.write(1, predicted_id[0])
         for i in tf.range(1, 50):
-            #other predictions
+            # other predictions
             output = tf.transpose(output_array.stack())
             predictions, _ = self.transformer([encoder_input, output], training=False)
             predictions = predictions[:, -1:, :]  # (batch_size, 1, vocab_size)
             predictions = tf.nn.softmax(predictions, axis=-1)
-            top = tf.math.top_k(predictions.numpy()[0][0],k=1) #greed search
+            top = tf.math.top_k(predictions.numpy()[0][0], k=1)  # greed search
             predicted_id = random.choices(top.indices.numpy(), weights=top.values.numpy(), k=1)
             predicted_id = tf.convert_to_tensor([predicted_id], dtype=tf.int64)
             output_array = output_array.write(i + 1, predicted_id[0])

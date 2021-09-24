@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="762cb299-a79c-43b2-b379-90bc90601324" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/poems/passero.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/DanteSyllabification.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/DanteSyllabification.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/generation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/preprocessing_syl.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/preprocessing_syl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/syllabification.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/syllabification.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/utils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -44,7 +39,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.syllabification">
+  <component name="RunManager" selected="Python.generation">
     <configuration name="generation" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="DanteSyllabification" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -110,9 +105,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.generation" />
         <item itemvalue="Python.syllabification" />
         <item itemvalue="Python.my_generatior" />
-        <item itemvalue="Python.generation" />
       </list>
     </recent_temporary>
   </component>
@@ -147,43 +142,53 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/model.py</url>
-          <line>171</line>
+          <line>167</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/model.py</url>
-          <line>141</line>
+          <line>131</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/model.py</url>
-          <line>168</line>
+          <line>160</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/syllabification.py</url>
-          <line>93</line>
+          <line>96</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/syllabification.py</url>
-          <line>88</line>
+          <line>91</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/model.py</url>
-          <line>122</line>
+          <line>110</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/model.py</url>
-          <line>119</line>
+          <line>107</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/model.py</url>
-          <line>115</line>
+          <line>103</line>
           <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/generation.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/tokenizer.py</url>
+          <line>2</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
