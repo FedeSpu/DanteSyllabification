@@ -5,9 +5,6 @@ import os
 import tensorflow as tf
 from tensorflow_text.tools.wordpiece_vocab import bert_vocab_from_dataset as bert_vocab
 
-# file_to_read = "divina_syll_good"
-# file_training = "dante_training"
-# file_result = "dante_result_training"
 file_vocabulary = "dante_vocabulary"
 punctuation = r'[?!;:.,«»"“‟”()\-—\[\]]'
 
@@ -22,7 +19,7 @@ def generate_data(file_training, file_result, file_to_read):
     with open('../outputs/' + file_result + '.txt', 'w+', encoding='utf-8') as file:
         file.writelines(result)
 
-    text_no_tag = re.sub(rf'Y', ' ', result)
+    text_no_tag = re.sub(rf'I', ' ', result)
     text_no_tag = re.sub(rf'S', ' ', text_no_tag)
     text_no_tag = re.sub(rf'T', ' ', text_no_tag)
     text_no_tag = re.sub(rf'E', ' ', text_no_tag)
@@ -54,16 +51,16 @@ def generate_result(data):
     # add tag sep to indicate separator
     result_text = re.sub(r' +', ' S ', data)
     # add tag syl to indicate syllabification and delete whitespace generated
-    result_text = re.sub(r'\|', ' Y ', result_text)
+    result_text = re.sub(r'\|', ' I ', result_text)
     # adjustment
-    result_text = re.sub(r'S  Y', 'S Y', result_text)
-    result_text = re.sub(r'\n Y', '\nY', result_text)
+    result_text = re.sub(r'S  I', 'S I', result_text)
+    result_text = re.sub(r'\n I', '\nI', result_text)
     # add SOV as start of verse
-    result_text = re.sub(r'\nY', '\nT Y', result_text)
+    result_text = re.sub(r'\nI', '\nT I', result_text)
     # add EOV as end of verse
     result_text = re.sub(r'\n', ' E\n', result_text)
     # add SOV as start of the first verse
-    result_text = re.sub(r'^ Y', '\nT Y', result_text)
+    result_text = re.sub(r'^ I', '\nT I', result_text)
     # add EOV as end of last verse
     result_text = re.sub(r'$', ' E\n', result_text)
     # delete first empty line
@@ -94,10 +91,10 @@ def read_data(file_to_read):
 def generate_vocabulary(training_data):
     train_pt = tf.data.Dataset.from_tensor_slices(training_data.split('\n'))
     bert_tokenizer_params = dict(lower_case=False)
-    reserved_tokens = ['S', 'Y', 'T', 'E', '[START]', '[END]']
+    reserved_tokens = ['S', 'I', 'T', 'E', '[START]', '[END]']
     bert_vocab_args = dict(
         # The target vocabulary size
-        vocab_size=200,  # TODO: capire perchè è 200 e non 1000/2000
+        vocab_size=200,
         # Reserved tokens that must be included in the vocabulary
         reserved_tokens=reserved_tokens,
         # Arguments for `text.BertTokenizer`
@@ -109,15 +106,9 @@ def generate_vocabulary(training_data):
     pt_vocab = bert_vocab.bert_vocab_from_dataset(
         train_pt.batch(1000).prefetch(2),
         **bert_vocab_args
-    )  # TODO: 1000 or 200?
+    )
     with open('../outputs/' + file_vocabulary + '.txt', 'w', encoding='utf-8') as f:
         for token in pt_vocab:
             print(token, file=f)
 
 
-file_training = 'dante_training'
-file_result = 'dante_result_training'
-file_to_read = 'divina_syll_good'
-
-
-generate_data(file_training, file_result, file_to_read)

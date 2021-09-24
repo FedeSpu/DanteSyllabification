@@ -1,4 +1,4 @@
-# Code from Tensorflow guide (https://www.tensorflow.org/text/guide/subwords_tokenizer)
+#https://www.tensorflow.org/text/guide/subwords_tokenizer
 
 import tensorflow as tf
 import tensorflow_text as text
@@ -17,7 +17,7 @@ def add_start_end(ragged, reserved_tokens):
 
 def cleanup_text(reserved_tokens, token_txt):
     # Drop the reserved tokens, except for
-    bad_tokens = [re.escape(tok) for tok in reserved_tokens if tok not in ['B','S', 'Y', 'E', 'T']]
+    bad_tokens = [re.escape(tok) for tok in reserved_tokens if tok not in ['B','S', 'I', 'E', 'T']]
     bad_token_re = "$".join(bad_tokens)
 
     bad_cells = tf.strings.regex_full_match(token_txt, bad_token_re)
@@ -25,11 +25,12 @@ def cleanup_text(reserved_tokens, token_txt):
 
     # Join them into strings.
     result = tf.strings.reduce_join(result, separator='', axis=-1)
+    result = tf.strings.regex_replace(result, '[START]', '')
+    result = tf.strings.regex_replace(result, '[END]', '')
     result = tf.strings.regex_replace(result, 'S', ' ')
-    result = tf.strings.regex_replace(result, 'Y', '|')
+    result = tf.strings.regex_replace(result, 'I', '|')
     result = tf.strings.regex_replace(result, 'E', '\n')
-    # TODO: Useless?
-    result = tf.strings.regex_replace(result, 'T', '')
+    result = tf.strings.regex_replace(result, 'T', '\n')
     result = tf.strings.regex_replace(result, 'B', '')
     return result
 
