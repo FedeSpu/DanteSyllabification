@@ -3,6 +3,7 @@ from src.transformer import *
 from src.transformer_utils.checkpoint import *
 import time
 import random
+import re
 
 
 EPOCHS = 50
@@ -123,6 +124,9 @@ class ModelTransformer(object):
         output = tf.transpose(output_array.stack())
         # output.shape (1, tokens)
         text = tokenizer.detokenize(output)[0]
+        text = text.numpy().decode('utf-8')
+        text = re.sub(rf'\[', '', text)
+        text = re.sub(rf'\]', '', text)
         return text
 
     def generate(self, sentence, tokenizer):
@@ -138,16 +142,18 @@ class ModelTransformer(object):
         output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True)
         output_array = output_array.write(0, start)
         output = tf.transpose(output_array.stack())
-
+        #first prediction
         predictions, _ = self.transformer([encoder_input, output], training=False)
         predictions = predictions[:, -1:, :]
         predicted_id = tf.argmax(predictions, axis=-1)
         output_array = output_array.write(1, predicted_id[0])
         for i in tf.range(1, 50):
+            #other predictions
+            output = tf.transpose(output_array.stack())
             predictions, _ = self.transformer([encoder_input, output], training=False)
             predictions = predictions[:, -1:, :]  # (batch_size, 1, vocab_size)
             predictions = tf.nn.softmax(predictions, axis=-1)
-            top = tf.math.top_k(predictions.numpy()[0][0])
+            top = tf.math.top_k(predictions.numpy()[0][0],k=1) #greed search
             predicted_id = random.choices(top.indices.numpy(), weights=top.values.numpy(), k=1)
             predicted_id = tf.convert_to_tensor([predicted_id], dtype=tf.int64)
             output_array = output_array.write(i + 1, predicted_id[0])
@@ -156,4 +162,7 @@ class ModelTransformer(object):
         output = tf.transpose(output_array.stack())
         # output.shape (1, tokens)
         text = tokenizer.detokenize(output)[0]
+        text = text.numpy().decode('utf-8')
+        text = re.sub(rf'\[', '', text)
+        text = re.sub(rf'\]', '', text)
         return text

@@ -80,7 +80,7 @@ dataset = make_dataset(X_train, y_train)
 model = ModelTransformer(transformer_config, vocab_size, vocab_size)
 train_batches = make_batches(train)   #dataset = make_batches(train) (Codice Fede)
 val_batches = make_batches(val)       #dataset = make_batches(val)   (Codice Fede)
-model.train(train_batches,val_batches, 1)  # TODO: remember to change to 20
+model.train(train_batches,val_batches, 0)  # TODO: remember to change to 20
 
 #line = 'nel mezzo del cammin di nostra vita'
 line = 'la mamma si lava bene i denti'
@@ -89,8 +89,8 @@ line = 'la mamma si lava bene i denti'
 #OK
 #line = tokenizer.tokenize(line).to_tensor()
 #encoder_input = line
-
-print(model.syllabify(tf.constant(line),tokenizer))
+text=model.syllabify(tf.constant(line),tokenizer)
+print(text)
 
 
 
