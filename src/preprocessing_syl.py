@@ -9,6 +9,26 @@ file_vocabulary = "dante_vocabulary"
 punctuation = r'[?!;:.,«»"“‟”()\-—\[\]]'
 
 
+def preprocess_text(lines):
+    res = []
+    if len(lines) > 1:
+        for raw_text in lines:
+            raw_text = raw_text.lower()
+            # remove sentences such as canto V
+            raw_text = re.sub(r'.* • canto .*', '', raw_text)
+            # remove punctuation
+            raw_text = re.sub(punctuation, '', raw_text)
+            # remove enumeration
+            raw_text = re.sub(r'\n *\d* ', '\n', raw_text)
+            # replace auxiliary characters
+            raw_text = re.sub(r'[’‘\']', '’', raw_text)
+            # delete first empty line
+            raw_text = re.sub(r'^\n\n', '', raw_text)
+            res.append(raw_text)
+
+    return res
+
+
 # Pre-processing text and produce output file
 def generate_data(file_training, file_result, file_to_read):
     data = read_data(file_to_read)
@@ -45,6 +65,7 @@ def generate_training_data(data):
     # delete | indicating syllabification
     training_data = re.sub(r'\|', '', data)
     return data, training_data
+
 
 # Generate text syllabied with tag
 def generate_result(data):
@@ -110,5 +131,3 @@ def generate_vocabulary(training_data):
     with open('../outputs/' + file_vocabulary + '.txt', 'w', encoding='utf-8') as f:
         for token in pt_vocab:
             print(token, file=f)
-
-

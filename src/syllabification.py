@@ -54,7 +54,6 @@ train, val, test = generate_dataset(file_training, file_result)
 tokenizer = Tokenizer(['S', 'Y', 'T', 'E', '[START]', '[END]'],
                       '../outputs/' + file_vocabulary + '.txt')
 
-
 # 2.1) Set hyperparameters
 transformer_config = {'num_layers': 4,
                       'd_model': 128,  # 256

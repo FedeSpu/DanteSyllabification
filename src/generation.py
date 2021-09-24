@@ -3,9 +3,13 @@ from src.tokenizer_gen import *
 from src.preprocessing_gen import *
 from src.utils.utils import *
 
+# tf.test.gpu_device_name()
+# print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+# tf.debugging.set_log_device_placement(True)
 
 BUFFER_SIZE = 20000
 BATCH_SIZE = 64
+
 
 def tokenize_pairs(X, y):
     X = tokenizer.tokenize(X)
@@ -17,6 +21,7 @@ def tokenize_pairs(X, y):
     y = y.to_tensor()
 
     return X, y
+
 
 def make_batches(ds):
     return (ds
@@ -33,8 +38,7 @@ file_training = "dante_training_gen"
 file_result = "dante_result_training_gen"
 file_vocabulary = "dante_vocabulary_gen"
 
-
-generate_data(file_training,file_result,file_to_read)
+# generate_data(file_training, file_result, file_to_read)
 train, val, test = load_gen_dataset()
 
 tokenizer = TokenizerGen(['S', 'I', 'T', 'E', 'B', '[START]', '[END]'],

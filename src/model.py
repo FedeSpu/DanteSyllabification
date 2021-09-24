@@ -5,7 +5,6 @@ import time
 import random
 import re
 
-
 EPOCHS = 50
 
 train_step_signature = [
@@ -54,8 +53,7 @@ class ModelTransformer(object):
         self.train_loss(loss)
         self.train_accuracy(accuracy_function(tar_real, predictions))
 
-
-    def train(self, train,val, EPOCHS):
+    def train(self, train, val, EPOCHS):
         for epoch in range(EPOCHS):
             start = time.time()
 
@@ -69,10 +67,10 @@ class ModelTransformer(object):
             for (batch, (inp, tar)) in enumerate(train):
                 self.train_step(inp=inp, tar=tar)
 
-                #if batch % 50 == 0:
-                print(
-                    f'Epoch {epoch + 1} Batch {batch} Loss {self.train_loss.result():.4f} '
-                    f'Accuracy {self.train_accuracy.result():.4f}')
+                if batch % 50 == 0:
+                    print(
+                        f'Epoch {epoch + 1} Batch {batch} Loss {self.train_loss.result():.4f} '
+                        f'Accuracy {self.train_accuracy.result():.4f}')
 
             if (epoch + 1) % 5 == 0:
                 ckpt_save_path = self.cpkt_manager.save()
@@ -92,19 +90,21 @@ class ModelTransformer(object):
 
 
             print(f'Epoch {epoch + 1} Loss {self.train_loss.result():.4f} Accuracy {self.train_accuracy.result():.4f}')
-            print(f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
+            print(
+                f'Epoch {epoch + 1} Validation loss {self.val_loss.result():.4f} Validation accuracy {self.val_accuracy.result():.4f}')
             print(f'Time taken for 1 epoch: {time.time() - start:.2f} secs\n')
 
     def get_transformer(self):
         return self.transformer
 
-    def syllabify(self,sentence,tokenizer):
+    def syllabify(self, sentence, tokenizer):
         assert isinstance(sentence, tf.Tensor)
         if len(sentence.shape) == 0:
             sentence = sentence[tf.newaxis]
 
         sentence = tokenizer.tokenize(sentence).to_tensor()
         encoder_input = sentence
+        print(encoder_input)
         start_end = tokenizer.tokenize([''])[0]
         start = start_end[0][tf.newaxis]
         end = start_end[1][tf.newaxis]
@@ -139,18 +139,18 @@ class ModelTransformer(object):
         output_array = tf.TensorArray(dtype=tf.int64, size=0, dynamic_size=True)
         output_array = output_array.write(0, start)
         output = tf.transpose(output_array.stack())
-        #first prediction
+        # first prediction
         predictions, _ = self.transformer([encoder_input, output], training=False)
         predictions = predictions[:, -1:, :]
         predicted_id = tf.argmax(predictions, axis=-1)
         output_array = output_array.write(1, predicted_id[0])
         for i in tf.range(1, 50):
-            #other predictions
+            # other predictions
             output = tf.transpose(output_array.stack())
             predictions, _ = self.transformer([encoder_input, output], training=False)
             predictions = predictions[:, -1:, :]  # (batch_size, 1, vocab_size)
             predictions = tf.nn.softmax(predictions, axis=-1)
-            top = tf.math.top_k(predictions.numpy()[0][0],k=1) #greed search
+            top = tf.math.top_k(predictions.numpy()[0][0], k=1)  # greed search
             predicted_id = random.choices(top.indices.numpy(), weights=top.values.numpy(), k=1)
             predicted_id = tf.convert_to_tensor([predicted_id], dtype=tf.int64)
             output_array = output_array.write(i + 1, predicted_id[0])
