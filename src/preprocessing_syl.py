@@ -5,11 +5,28 @@ import os
 import tensorflow as tf
 from tensorflow_text.tools.wordpiece_vocab import bert_vocab_from_dataset as bert_vocab
 
-# file_to_read = "divina_syll_good"
-# file_training = "dante_training"
-# file_result = "dante_result_training"
 file_vocabulary = "dante_vocabulary"
 punctuation = r'[?!;:.,«»"“‟”()\-—\[\]]'
+
+
+def preprocess_text(lines):
+    res = []
+    if len(lines) > 1:
+        for raw_text in lines:
+            raw_text = raw_text.lower()
+            # remove sentences such as canto V
+            raw_text = re.sub(r'.* • canto .*', '', raw_text)
+            # remove punctuation
+            raw_text = re.sub(punctuation, '', raw_text)
+            # remove enumeration
+            raw_text = re.sub(r'\n *\d* ', '\n', raw_text)
+            # replace auxiliary characters
+            raw_text = re.sub(r'[’‘\']', '’', raw_text)
+            # delete first empty line
+            raw_text = re.sub(r'^\n\n', '', raw_text)
+            res.append(raw_text)
+
+    return res
 
 
 # Pre-processing text and produce output file
@@ -48,6 +65,7 @@ def generate_training_data(data):
     # delete | indicating syllabification
     training_data = re.sub(r'\|', '', data)
     return data, training_data
+
 
 # Generate text syllabied with tag
 def generate_result(data):
@@ -115,9 +133,10 @@ def generate_vocabulary(training_data):
             print(token, file=f)
 
 
+'''
 file_training = 'dante_training'
 file_result = 'dante_result_training'
 file_to_read = 'divina_syll_good'
 
-
 generate_data(file_training, file_result, file_to_read)
+'''

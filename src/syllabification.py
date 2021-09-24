@@ -3,6 +3,7 @@ from src.utils.utils import *
 from src.tokenizer import *
 from src.preprocessing_syl import *
 
+
 # OK
 def tokenize_pairs(X, y):
     X = tokenizer.tokenize(X)
@@ -49,13 +50,12 @@ def make_dataset(*sequences, batch_size=64):
 
 # 1) Pre-processing data
 # Pre-processing
-# generate_data(file_training, file_result, file_to_read)
+generate_data(file_training, file_result, file_to_read)
 # Generate train, validation and test data
 train, val, test = generate_dataset(file_training, file_result)
 # Tokenization
 tokenizer = Tokenizer(['S', 'Y', 'T', 'E', '[START]', '[END]'],
                       '../outputs/' + file_vocabulary + '.txt')
-
 
 # 2.1) Set hyperparameters
 transformer_config = {'num_layers': 4,
@@ -65,7 +65,7 @@ transformer_config = {'num_layers': 4,
                       'dropout_rate': 0.1}
 
 # vocab_size = len(tokenizer.word_index) + 1
-vocab_size = tokenizer.get_vocab_size().numpy()+1
+vocab_size = tokenizer.get_vocab_size().numpy() + 1
 '''
 model = ModelTransformer(transformer_config, tokenizer, vocab_size, vocab_size)
 X_train = tf.dtypes.cast(X_train, dtype=tf.int64)
@@ -73,21 +73,35 @@ y_train = tf.dtypes.cast(y_train, dtype=tf.int64)
 dataset = make_dataset(X_train, y_train)
 '''
 model = ModelTransformer(transformer_config, vocab_size, vocab_size)
-train_batches = make_batches(train)   #dataset = make_batches(train) (Codice Fede)
-val_batches = make_batches(val)       #dataset = make_batches(val)   (Codice Fede)
-model.train(train_batches,val_batches, 1)  # TODO: remember to change to 20
+train_batches = make_batches(train)
+val_batches = make_batches(val)
+model.train(train_batches, val_batches, 0)  # TODO: remember to change to 20
 
-#line = 'nel mezzo del cammin di nostra vita'
-line = 'la mamma si lava bene i denti'
-#OK
-#line = tf.convert_to_tensor([line])
-#OK
-#line = tokenizer.tokenize(line).to_tensor()
-#encoder_input = line
+file_name = 'silvia'
+f = open('./poems/' + file_name + '.txt', 'r', encoding='utf-8')
+f2 = open('./poems/' + file_name + '_syll.txt', 'w+', encoding='utf-8')
+lines = f.readlines()
+lines = preprocess_text(lines)
+for line in lines:
+    line = line.rstrip()
+    text_res = model.syllabify(tf.constant(line), tokenizer)
+    res = text_res.numpy().decode('utf-8')
+    res = res[2:][:-2]
+    f2.write(res + '\n')
+    print(res)
 
-print(model.syllabify(tf.constant(line),tokenizer))
+f.close()
+f2.close()
 
-
+# line = 'nel mezzo del cammin di nostra vita'
+# line = 'cantami o diva del pelide achille'
+# OK
+# line = tf.convert_to_tensor([line])
+# OK
+# line = tokenizer.tokenize(line).to_tensor()
+# encoder_input = line
+# text_res = model.syllabify(tf.constant(line), tokenizer)
+# print(text_res.numpy().decode('utf-8'))
 
 '''
 test_line = make_batches(test)  # line

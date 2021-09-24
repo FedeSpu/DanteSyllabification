@@ -4,7 +4,6 @@ from src.transformer_utils.checkpoint import *
 import time
 import random
 
-
 EPOCHS = 50
 
 train_step_signature = [
@@ -76,18 +75,18 @@ class ModelTransformer(object):
             for (batch, (inp, tar)) in enumerate(train):
                 self.train_step(inp=inp, tar=tar)
 
-                #if batch % 50 == 0:
-                print(
-                    f'Epoch {epoch + 1} Batch {batch} Loss {self.train_loss.result():.4f} '
-                    f'Accuracy {self.train_accuracy.result():.4f}')
+                if batch % 50 == 0:
+                    print(
+                        f'Epoch {epoch + 1} Batch {batch} Loss {self.train_loss.result():.4f} '
+                        f'Accuracy {self.train_accuracy.result():.4f}')
 
             if (epoch + 1) % 5 == 0:
                 ckpt_save_path = self.cpkt_manager.save()
                 print(f'Saving checkpoint for epoch {epoch + 1} at {ckpt_save_path}')
 
-        #added the part for the validation dataset
-            #TODO:cambiarla leggermente
-            #-----
+            # added the part for the validation dataset
+            # TODO:cambiarla leggermente
+            # -----
             for val_entry in val:
                 val_inp = val_entry[0]
                 val_tar = val_entry[1]
@@ -113,13 +112,14 @@ class ModelTransformer(object):
     def get_transformer(self):
         return self.transformer
 
-    def syllabify(self,sentence,tokenizer):
+    def syllabify(self, sentence, tokenizer):
         assert isinstance(sentence, tf.Tensor)
         if len(sentence.shape) == 0:
             sentence = sentence[tf.newaxis]
 
         sentence = tokenizer.tokenize(sentence).to_tensor()
         encoder_input = sentence
+        print(encoder_input)
         start_end = tokenizer.tokenize([''])[0]
         start = start_end[0][tf.newaxis]
         end = start_end[1][tf.newaxis]

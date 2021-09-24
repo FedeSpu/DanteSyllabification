@@ -6,7 +6,7 @@ import numpy as np
 
 # file_training = "danteTraining"
 # file_result = "danteResultTraining"
-
+'''
 train_size = 0.98
 train_size_val = 0.99
 random_state = 1
@@ -14,7 +14,7 @@ random_state = 1
 train_size = 0.95
 train_size_val = 0.8
 random_state = 42
-'''
+
 
 def generate_dataset(file_training, file_result):
     with open('../outputs/' + file_training + '.txt', 'r+', encoding='utf-8') as file:
@@ -59,21 +59,22 @@ def plot_accuracy(train_losses, train_accuracies, val_losses, val_accuracies):
     ax2.set_xticks(np.arange(start, end, 3))
     plt.show()
 
+
 def load_gen_dataset():
     with open('../outputs_gen/dante_training_gen.txt', 'r+', encoding='utf-8') as file:
         X = file.readlines()
     with open('../outputs_gen/dante_result_training_gen.txt', 'r+', encoding='utf-8') as file:
         y = file.readlines()
-    X=''.join(X)
+    X = ''.join(X)
     y = ''.join(y)
-    X = re.sub(r'\n',' ',X)
-    y = re.sub(r'\n',' ', y)
+    X = re.sub(r'\n', ' ', X)
+    y = re.sub(r'\n', ' ', y)
     X = X.split('T')
     y = y.split('T')
-    #TODO: controllare meglio i settaggi
+    # TODO: controllare meglio i settaggi
     Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, random_state=random_state, train_size=0.75)
     Xtrain, Xval, ytrain, yval = train_test_split(Xtrain, ytrain, random_state=random_state, train_size=0.80)
     train = tf.data.Dataset.from_tensor_slices((Xtrain, ytrain))
     test = tf.data.Dataset.from_tensor_slices((Xtest, ytest))
     val = tf.data.Dataset.from_tensor_slices((Xval, yval))
-    return train,test,val
+    return train, test, val
